@@ -6,11 +6,17 @@ import { ArrowRight, CalendarDays, Check, CheckCircle2, Clock3, Filter, HardHat,
 import type { Catalogs, VisitRow } from "@/server/visits";
 import { displayDate, formatMinute } from "@/domain/time";
 import { api } from "@/client/api";
+import { CatalogManager } from "./catalog-manager";
+import { VisitDetail } from "./visit-detail";
 
 type Filters = { date: string; technicianId: string };
 type Notice = { text: string; tone: "success" | "error" } | null;
 
-export function Planner({ catalogs, initialVisits, today }: { catalogs: Catalogs; initialVisits: VisitRow[]; today: string }) {
+export function Planner({ catalogs: initialCatalogs, initialVisits, today }: { catalogs: Catalogs; initialVisits: VisitRow[]; today: string }) {
+  const [catalogs, setCatalogs] = useState(initialCatalogs);
+  const [manageCatalogs, setManageCatalogs] = useState(false);
+  const [detailId, setDetailId] = useState<number | null>(null);
+  const [typeId, setTypeId] = useState("");
   const [visits, setVisits] = useState(initialVisits);
   const [filters, setFilters] = useState<Filters>({ date: today, technicianId: "" });
   const [applied, setApplied] = useState(filters);
@@ -59,7 +65,7 @@ export function Planner({ catalogs, initialVisits, today }: { catalogs: Catalogs
   async function createVisit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const input = { technicianId: Number(form.get("technicianId")), siteId: Number(form.get("siteId")), date: String(form.get("date")), startTime: String(form.get("startTime")), duration: Number(form.get("duration")) };
+    const input = { technicianId: Number(form.get("technicianId")), siteId: Number(form.get("siteId")), date: String(form.get("date")), startTime: String(form.get("startTime")), duration: Number(form.get("duration")), ...(typeId ? { typeId: Number(typeId) } : {}) };
     setSaving(true);
     setFormError("");
     setNotice(null);
@@ -104,6 +110,7 @@ export function Planner({ catalogs, initialVisits, today }: { catalogs: Catalogs
     </header>
 
     <main className="workspace">
+      <div className="workspace-tools"><button type="button" className="button secondary" disabled={busy} onClick={() => setManageCatalogs(true)}>Obras y tipos</button></div>
       <div className="page-heading">
         <div><p className="eyebrow">PLANIFICACIÓN DEL EQUIPO</p><h1>Agenda de visitas<span className="heading-dot">.</span></h1><p className="page-description">Cada obra a su hora. Organiza las visitas y evita conflictos.</p></div>
         <div className="team-indicator"><span className="team-icon"><Users size={20} aria-hidden="true" /></span><span><strong>{catalogs.technicians.length} técnicos</strong><small>{catalogs.sites.length} obras en el catálogo</small></span></div>
@@ -130,7 +137,7 @@ export function Planner({ catalogs, initialVisits, today }: { catalogs: Catalogs
             {visits.length ? <div className="table-scroll"><table><caption className="sr-only">Visitas ordenadas por fecha y hora</caption><thead><tr><th>Fecha / hora</th><th>Técnico</th><th>Obra</th><th>Estado</th><th><span className="sr-only">Acciones</span></th></tr></thead><tbody>{visits.map((visit) => <tr key={visit.id} className={visit.status === "Cancelada" ? "cancelled-row" : ""}>
               <td><span className="visit-time">{formatMinute(visit.startMinute)}<span>–</span>{formatMinute(visit.startMinute + visit.duration)}</span><small>{displayDate(visit.date)} <span className="date-dot">·</span> {visit.duration} min</small></td>
               <td><div className="person"><span className={`avatar avatar-${visit.technicianId % 4}`} aria-hidden="true">{visit.technicianName.split(" ").map((part) => part[0]).slice(0, 2).join("")}</span><span>{visit.technicianName}</span></div></td>
-              <td><span className="site-name">{visit.siteName}</span><small className="municipality"><MapPin size={11} aria-hidden="true" />{visit.municipality}</small></td>
+              <td><button type="button" className="site-name site-detail-link" onClick={() => setDetailId(visit.id)} aria-label={`Ver detalle de la visita a ${visit.siteName}`}>{visit.siteName}</button><small className="municipality"><MapPin size={11} aria-hidden="true" />{visit.municipality}</small>{visit.typeName && <small>{visit.typeName}</small>}</td>
               <td><span className={`badge ${visit.status === "Programada" ? "scheduled" : "cancelled"}`}><span />{visit.status}</span></td>
               <td>{visit.status === "Programada" ? <button className="cancel-link" type="button" disabled={busy} aria-label={`Cancelar visita de ${visit.technicianName} el ${displayDate(visit.date)} a las ${formatMinute(visit.startMinute)}`} onClick={() => { setCancelError(""); setCancelTarget(visit); }}>Cancelar</button> : <span className="no-action" aria-label="Visita cancelada">—</span>}</td>
             </tr>)}</tbody></table></div> : <div className="empty-state"><span className="empty-icon"><CalendarDays size={28} strokeWidth={1.5} aria-hidden="true" /></span><h3>La agenda está despejada</h3><p>No hay visitas para esta selección.<br />Programa una nueva o cambia los filtros.</p><button className="text-button" type="button" onClick={() => { formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); formRef.current?.querySelector<HTMLSelectElement>("select")?.focus({ preventScroll: true }); }}>Programar una visita <ArrowRight size={15} aria-hidden="true" /></button></div>}
@@ -143,6 +150,7 @@ export function Planner({ catalogs, initialVisits, today }: { catalogs: Catalogs
           <div className="create-panel panel"><div className="create-heading"><span className="plus-icon"><Plus size={21} aria-hidden="true" /></span><div><h2 id="create-title">Nueva visita</h2><p>Asigna una obra y un horario.</p></div></div>
             <form onSubmit={createVisit} ref={formRef}>
               <fieldset disabled={busy || !catalogs.technicians.length || !catalogs.sites.length}>
+                <details className="optional-type"><summary>{typeId ? `Tipo: ${catalogs.types.find((t) => String(t.id) === typeId)?.name ?? "Seleccionado"}` : "Usar un tipo de visita (opcional)"}</summary><label>Tipo<select value={typeId} onChange={(e) => { setTypeId(e.target.value); const type = catalogs.types.find((t) => String(t.id) === e.target.value); if (type) setDuration(String(type.duration)); }}><option value="">Sin tipo · duración manual</option>{catalogs.types.filter((t) => t.active || String(t.id) === typeId).map((t) => <option key={t.id} value={t.id} disabled={!t.active}>{t.name} · {t.duration} min{!t.active && " · Desactivado"}</option>)}</select></label><p className="detail-help">La duración propuesta se puede ajustar. Gestiona tus tipos en «Obras y tipos».</p></details>
                 <label htmlFor="new-site">Obra<select id="new-site" name="siteId" required defaultValue=""><option value="" disabled>Selecciona una obra</option>{catalogs.sites.map((site) => <option key={site.id} value={site.id}>{site.name} · {site.municipality}</option>)}</select></label>
                 <label htmlFor="new-technician">Técnico<select id="new-technician" name="technicianId" required defaultValue=""><option value="" disabled>Selecciona un técnico</option>{catalogs.technicians.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}</select></label>
                 <label htmlFor="new-date">Fecha<input type="date" id="new-date" name="date" required defaultValue={today} /></label>
@@ -159,6 +167,8 @@ export function Planner({ catalogs, initialVisits, today }: { catalogs: Catalogs
       </div>
       <footer className="page-footer"><span>Planificador de visitas</span><span>Horario local · Europe/Madrid</span></footer>
     </main>
+    {manageCatalogs && <CatalogManager catalogs={catalogs} onChange={setCatalogs} onClose={() => setManageCatalogs(false)} />}
+    {detailId !== null && <VisitDetail key={detailId} id={detailId} onClose={() => setDetailId(null)} />}
 
     <dialog ref={dialog} className="cancel-dialog" onCancel={(event) => { if (cancelling) event.preventDefault(); else setCancelTarget(null); }} onClose={() => setCancelTarget(null)} aria-labelledby="cancel-title">
       <div className="dialog-icon"><CalendarDays size={24} aria-hidden="true" /></div><h2 id="cancel-title">¿Cancelar esta visita?</h2>

@@ -1,5 +1,12 @@
-import { ZodError } from "zod";
+import { z, ZodError } from "zod";
+import { idSchema } from "../domain/input";
 import { VisitError } from "./visits";
+
+export async function routeId(context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
+  z.string().regex(/^\d+$/).parse(id);
+  return idSchema.parse(Number(id));
+}
 
 export function assertMutationRequest(request: Request) {
   const origin = request.headers.get("origin");

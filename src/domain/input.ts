@@ -10,6 +10,7 @@ export const idSchema = z.number().int().positive().max(2147483647);
 export const visitInputSchema = z.strictObject({
   technicianId: idSchema,
   siteId: idSchema,
+  typeId: idSchema.optional(),
   date: dateSchema,
   startTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Introduce una hora válida (HH:mm)."),
   duration: z.number().int("La duración debe ser un número entero de minutos.").positive("La duración debe ser mayor que cero.").max(540, "La duración no puede superar la jornada de 9 horas."),

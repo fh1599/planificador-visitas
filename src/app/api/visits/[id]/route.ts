@@ -1,9 +1,14 @@
 import { z } from "zod";
 import { getDatabase } from "@/db/connection";
 import { visitService } from "@/server/visits";
-import { assertMutationRequest, respond } from "@/server/http";
+import { assertMutationRequest, respond, routeId } from "@/server/http";
+import { operationsService } from "@/server/operations";
 
 export const runtime = "nodejs";
+
+export async function GET(_request: Request, context: { params: Promise<{ id: string }> }) {
+  return respond(async () => operationsService(getDatabase()).detail(await routeId(context)));
+}
 
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   return respond(async () => {

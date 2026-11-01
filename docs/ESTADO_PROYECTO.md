@@ -38,3 +38,5 @@ El usuario respondió «Ahora se guarda correctamente» tras recargar la versió
 El usuario seleccionó búsqueda de huecos, reprogramación, agenda visual, bloqueos, fichas de obra, seguimiento opcional, tipos sin complicar el formulario y avisos dentro de la aplicación. Solicitó fases/subfases y pruebas de diseño/regresión antes de implementar. PLAN_AMPLIACION.md concreta el alcance; notas no obligatorias y formulario sencillo son criterios de aceptación. El plan inicial se conserva como referencia histórica.
 
 Preparación de ampliación (0.1–0.3) completada: plan documentado y base comprobada de nuevo (79 unitarias + 21 integración; tipos y lint correctos). Siguiente bloque: 1.1, diseño de interacción, y 0.4/1.2, casos y diseño de migraciones.
+
+Avance posterior al plan: fase 1 de ampliación implementada (AM-05/06/07), migración aditiva aplicada y servidor local actualizado. 83 unitarias + 26 integraciones, tipos/lint/build correctos. Inspección visual nueva pendiente. Continuar fase 2 del plan de ampliación; el paquete previo todavía corresponde al núcleo.

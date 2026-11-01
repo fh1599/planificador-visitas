@@ -29,3 +29,5 @@ REG-002 añade comprobaciones de conexión y respuestas ilegibles del cliente. S
 ## Ampliación seleccionada
 
 AM-01–08, criterios de aceptación, dependencias y pruebas previstas en [PLAN_AMPLIACION.md](PLAN_AMPLIACION.md). Estado de todos ellos: planificados, implementación y verificación pendientes. Se mantienen las obligaciones del núcleo RF/RT/EN.
+
+Actualización fase 1: AM-05, AM-06 y AM-07 implementados en esquema, servicios, rutas y componentes de catálogo/detalle. Evidencia automática: operations.test.ts y grupo AM-05/06/07 de integración. Revisión visual/personal pendiente. AM-01/02/03/04/08 continúan pendientes.

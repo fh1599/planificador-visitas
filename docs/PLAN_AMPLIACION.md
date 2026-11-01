@@ -187,3 +187,7 @@ No basta con aumentar el número de tests. Las pruebas deben detectar comportami
 - Base verificada de nuevo en esta fase: 79 unitarias, 21 de integración, tipos y lint correctos. La compilación correcta pertenece al hito anterior sin cambios funcionales; no se ha repetido innecesariamente. Creación confirmada por el usuario.
 - La herramienta de navegador rechazó el acceso en la sesión anterior. No se ha reintentado ni eludido ese acceso al planificar; cualquier comprobación visual posterior deberá usar una vía autorizada.
 - Fase 0.1–0.3 completada. Próximo bloque: diseño de interacción (1.1) y preparación de los casos/migraciones (0.4 y 1.2), antes de aplicar cambios funcionales.
+
+## Avance de implementación
+
+01/11/2026, fase 1: subfases 0.4 y 1.1–1.6 implementadas; 83 unitarias, 26 integraciones, tipos/lint/build correctos y migración aplicada. AM-05/06/07 disponibles en la versión local. Inspección visual y validación personal pendientes; se mantienen en el cierre transversal. Siguiente bloque: fase 2, bloqueos.

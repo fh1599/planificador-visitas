@@ -86,3 +86,7 @@ Confirmación personal recibida el 01/11/2026: el usuario indicó que la visita 
 Los casos de AM-01–08 y las interacciones con el núcleo se definen antes de implementarlos en PLAN_AMPLIACION.md, fases 0–8 y matriz de interacciones. Son pruebas previstas; no se cuentan como ejecutadas. La confirmación del usuario se registrará por escenario.
 
 Fase 0 de ampliación, 01/11/2026: se repitieron 79 unitarias, TypeScript y lint, todos correctos. Integración falló al preparar la suite por conexión sin permiso de red (21 casos no ejecutados). Tras restablecer el permiso, las 21 pruebas de integración pasaron en 19,86 s. La base de la aplicación no se modificó.
+
+## Ampliación — hito 1, 01/11/2026
+
+83 unitarias y 26 integraciones PostgreSQL correctas, más tipos/lint/build. Nuevas pruebas AM-05/06/07: ficha vacía/teléfono/límites, anotación como texto, tipos inválidos/desactivados, duración manual, copia de instrucciones, conservación tras cancelación y API. Ensayo de actualización: SQL original con visitas programadas/canceladas en esquema aislado de *_test, aplicación de las migraciones siguientes y comparación de IDs, referencias, fecha, horas, estado y creación. Conexión de prueba protegida antes de toda escritura destructiva. La comprobación HTTP de la versión compilada no sustituye la revisión visual, pendiente.

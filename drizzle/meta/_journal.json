@@ -8,6 +8,13 @@
       "when": 1793375059710,
       "tag": "0000_bored_stellaris",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793537542490,
+      "tag": "0001_mean_riptide",
+      "breakpoints": true
     }
   ]
 }

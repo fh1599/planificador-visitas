@@ -8,6 +8,13 @@ import { sites, technicians, visits } from "../../src/db/schema";
 import { visitService } from "../../src/server/visits";
 import { POST, GET } from "../../src/app/api/visits/route";
 import { PATCH } from "../../src/app/api/visits/[id]/route";
+import { operationsService } from "../../src/server/operations";
+import { visitTypes } from "../../src/db/schema";
+import { readFileSync, readdirSync } from "node:fs";
+import { PATCH as editSite } from "../../src/app/api/sites/[id]/route";
+import { POST as addType } from "../../src/app/api/types/route";
+import { POST as addNote } from "../../src/app/api/visits/[id]/notes/route";
+import { GET as getDetail } from "../../src/app/api/visits/[id]/route";
 
 config({ path: ".env.local", quiet: true });
 const testUrl = process.env.TEST_DATABASE_URL;
@@ -22,6 +29,7 @@ const first = createDatabase(testUrl);
 const second = createDatabase(testUrl);
 const service = visitService(first.db);
 const independentService = visitService(second.db);
+const operations = operationsService(first.db);
 const input = { technicianId: 1, siteId: 1, date: "2026-11-02", startTime: "09:00", duration: 60 };
 const request = (body: unknown, origin = "http://localhost:3000") => new Request("http://localhost:3000/api/visits", { method: "POST", headers: { "Content-Type": "application/json", Origin: origin }, body: JSON.stringify(body) });
 
@@ -32,6 +40,72 @@ beforeAll(async () => {
 beforeEach(async () => {
   // Deliberately disposable fixtures, only in the guarded *_test database.
   await first.db.delete(visits);
+  await first.db.delete(visitTypes);
+});
+
+describe("AM-05/06/07 · Fichas, tipos y seguimiento", () => {
+  it("actualiza el esquema original conservando visitas programadas y canceladas", async () => {
+    // Isolated schema inside the guarded disposable DB; exact migration SQL,
+    // with only its namespace changed so the app schema cannot be affected.
+    await first.client.begin(async (tx) => {
+      await tx`create schema upgrade_test`;
+      await tx`set local search_path to upgrade_test`;
+      const files = readdirSync("./drizzle").filter((f) => f.endsWith(".sql")).sort();
+      const apply = async (file: string) => {
+        const content = readFileSync(`./drizzle/${file}`, "utf8").replaceAll('"public".', '"upgrade_test".');
+        for (const statement of content.split("--> statement-breakpoint")) if (statement.trim()) await tx.unsafe(statement);
+      };
+      await apply(files[0]);
+      await tx`insert into technicians (id, name) values (1, 'Anterior')`;
+      await tx`insert into sites (id, name, municipality) values (1, 'Anterior', 'Terrassa')`;
+      await tx`insert into visits (technician_id, site_id, date, start_minute, duration, status) values (1, 1, '2026-11-02', 540, 60, 'Programada'), (1, 1, '2026-11-02', 600, 30, 'Cancelada')`;
+      const before = await tx`select id, technician_id, site_id, date::text, start_minute, duration, status, created_at from visits order by id`;
+      for (const file of files.slice(1)) await apply(file);
+      const after = await tx`select id, technician_id, site_id, date::text, start_minute, duration, status, created_at from visits order by id`;
+      expect(after).toEqual(before);
+      expect(await tx`select type_id, type_name from visits`).toEqual([{ type_id: null, type_name: null }, { type_id: null, type_name: null }]);
+      await tx`drop schema upgrade_test cascade`;
+    });
+  });
+  it("valida las nuevas rutas HTTP y lee el detalle persistido", async () => {
+    const context = { params: Promise.resolve({ id: "1" }) };
+    expect((await editSite(request({ address: "", contact: "", phone: "", accessNotes: "" }), context)).status).toBe(200);
+    expect((await editSite(request({ address: "", contact: "", phone: "javascript:alert(1)", accessNotes: "" }), context)).status).toBe(400);
+    expect((await addType(request({ name: "Prueba API", duration: 45, instructions: "", active: true }))).status).toBe(201);
+    const visit = await service.create(input);
+    const visitContext = { params: Promise.resolve({ id: String(visit.id) }) };
+    expect((await addNote(request({ kind: "Nota", body: "API" }), visitContext)).status).toBe(201);
+    const response = await getDetail(request({}), visitContext);
+    expect(response.status).toBe(200);
+    expect((await response.json()).annotations[0].body).toBe("API");
+  });
+  it("edita datos opcionales de una obra sin alterar su identidad", async () => {
+    const site = await operations.updateSite(1, { address: "Calle de prueba 1", contact: "Ana", phone: "+34 600 123 456", accessNotes: "Acceso por el norte" });
+    expect(site).toMatchObject({ id: 1, name: "Residencial Can Roca", address: "Calle de prueba 1" });
+    expect((await independentService.catalogs()).sites.find((s) => s.id === 1)?.phone).toBe("+34 600 123 456");
+    await expect(operations.updateSite(2147483647, { address: "", contact: "", phone: "", accessNotes: "" })).rejects.toMatchObject({ code: "SITE_NOT_FOUND" });
+  });
+  it("conserva la duración manual e historial del tipo aunque cambie o se desactive", async () => {
+    const type = await operations.createType({ name: "Inspección", duration: 60, instructions: "Revisar acceso", active: true });
+    const visit = await service.create({ ...input, typeId: type.id, duration: 47 });
+    await operations.updateType(type.id, { name: "Inspección larga", duration: 90, instructions: "Otra pauta", active: false });
+    const detail = await operations.detail(visit.id);
+    expect(detail.visit).toMatchObject({ duration: 47, typeId: type.id, typeName: "Inspección", typeInstructions: "Revisar acceso" });
+    await expect(service.create({ ...input, technicianId: 2, typeId: type.id })).rejects.toMatchObject({ code: "TYPE_UNAVAILABLE" });
+    expect((await service.create({ ...input, technicianId: 2 })).typeId).toBeNull();
+  });
+  it("añade nota, incidencia y resultado sin cambiar disponibilidad ni perderlos al cancelar", async () => {
+    const visit = await service.create(input);
+    for (const kind of ["Nota", "Incidencia", "Resultado"]) await operations.annotate(visit.id, { kind, body: `<b>${kind}</b>` });
+    await expect(service.create(input)).rejects.toMatchObject({ code: "OVERLAP" });
+    await service.cancel(visit.id);
+    const detail = await operations.detail(visit.id);
+    expect(detail.visit.status).toBe("Cancelada");
+    expect(detail.annotations.map((a) => a.body)).toEqual(["<b>Nota</b>", "<b>Incidencia</b>", "<b>Resultado</b>"]);
+    await service.create(input);
+    await expect(operations.annotate(visit.id, { kind: "Nota", body: " " })).rejects.toThrow();
+    await expect(operations.detail(2147483647)).rejects.toMatchObject({ code: "VISIT_NOT_FOUND" });
+  });
 });
 afterAll(async () => {
   await first.db.delete(visits);
