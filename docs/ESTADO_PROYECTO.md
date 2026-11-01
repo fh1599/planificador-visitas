@@ -19,7 +19,7 @@ Actualizado: 01/11/2026. **Núcleo y ocho ampliaciones implementados; comprobaci
 
 ## Qué se ha confirmado personalmente
 
-El usuario confirmó que una visita se guarda correctamente, que la agenda diaria se ve bien y que pulsar una visita abre su detalle. No se extiende esa confirmación a reprogramación, bloqueos, anotaciones, avisos, móvil o teclado. La herramienta de navegador rechazó el acceso durante la ampliación; no se eludió ese bloqueo. Las pruebas HTTP no sustituyen interacción visual.
+El usuario confirmó que una visita se guarda correctamente, que la agenda diaria se ve bien y que pulsar una visita abre su detalle. También confirmó añadir una nota opcional y reprogramar a un horario libre: la agenda se actualiza y la nota se conserva al volver a abrir el detalle. No se extiende esa confirmación a bloqueos, avisos, otros escenarios de reprogramación/seguimiento, móvil o teclado. La herramienta de navegador rechazó el acceso durante la ampliación; no se eludió ese bloqueo. Las pruebas HTTP no sustituyen interacción visual.
 
 ## Recuperar el trabajo
 

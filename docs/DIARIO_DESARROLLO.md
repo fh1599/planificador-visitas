@@ -134,3 +134,8 @@ La versión ampliada pasó el ensayo desde copia sin dependencias/compilados y c
 La auditoría completa actual muestra un aviso moderado de minimatch propagado a 18 paquetes de desarrollo, sin avisos altos/críticos. La auditoría que omite desarrollo devuelve cero. Se consultaron el aviso primario y las versiones: la corrección indicada es 11.0.1, mientras los consumidores instalados requieren 3.x/10.x y npm no ofrece corrección automática. Se comunica la decisión de conservar el árbol probado y documentar el pendiente compatible; no se oculta el aviso ni se fuerza un salto mayor. Detalle reproducible en SEGURIDAD.md.
 
 Se actualizan README, estado, matriz, plan, pruebas y resumen de una página para reflejar las ocho funciones. Los registros históricos se conservan como tales. La documentación distingue pruebas automáticas/HTTP, confirmación personal recibida y revisión móvil/teclado todavía pendiente. Se prepara paquete desde commit local con inspección de archivos y valores privados; el manifiesto externo registra su identidad. GitHub/despliegue y envío a terceros no se ejecutan en este cierre.
+
+
+## 01/11/2026 — Validación personal de reprogramación con nota
+
+El usuario respondió «Sí, se actualiza y conserva la nota» a la comprobación de añadir una nota opcional, reprogramar la visita de prueba a un horario libre y volver a abrir el detalle. Se registra como confirmación personal de ese flujo y de la actualización visible de la agenda. No se infieren pruebas de conflictos, concurrencia, cancelación, otros tipos de seguimiento, bloqueos, avisos, móvil o teclado. Se actualizan documentación y paquete; el código funcional y los resultados automáticos anteriores no cambian ni se presentan como nuevas ejecuciones.

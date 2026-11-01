@@ -139,4 +139,9 @@ La documentación y el resumen se actualizan para las ocho ampliaciones. Se revi
 
 La auditoría de dependencias se registra con su resultado actual en SEGURIDAD.md; el resultado histórico de cero avisos del núcleo no describe la consulta más reciente. No se cambian dependencias durante este cierre documental.
 
-Quedan pendientes interacción real de móvil/teclado y confirmación personal del resto de acciones ampliadas. La confirmación recibida cubre creación, apariencia de agenda y apertura de detalle. La herramienta de navegador bloqueó el acceso; HTTP y SSR no prueban foco real, disposición móvil ni clics en todos los formularios. GitHub público y el despliegue opcional siguen pendientes de sus decisiones de publicación.
+Quedan pendientes interacción real de móvil/teclado y confirmación personal del resto de acciones ampliadas. La confirmación recibida cubre creación, apariencia de agenda, apertura de detalle y reprogramación a un horario libre con actualización de agenda y conservación de la nota al reabrir el detalle. La herramienta de navegador bloqueó el acceso; HTTP y SSR no prueban foco real, disposición móvil ni clics en todos los formularios. GitHub público y el despliegue opcional siguen pendientes de sus decisiones de publicación.
+
+
+## 01/11/2026 — Validación personal de reprogramación con nota
+
+El usuario respondió «Sí, se actualiza y conserva la nota» a la comprobación de añadir una nota opcional, reprogramar la visita de prueba a un horario libre y volver a abrir el detalle. Se registra como confirmación personal de ese flujo y de la actualización visible de la agenda. No se infieren pruebas de conflictos, concurrencia, cancelación, otros tipos de seguimiento, bloqueos, avisos, móvil o teclado. Se actualizan documentación y paquete; el código funcional y los resultados automáticos anteriores no cambian ni se presentan como nuevas ejecuciones.

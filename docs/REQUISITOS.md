@@ -1,6 +1,6 @@
 # Matriz de requisitos
 
-Auditoría del 01/11/2026. IDs del plan aprobado, no numeración original del PDF. «Cumplido» se refiere a la implementación y evidencia indicada; **el usuario confirmó creación, apariencia de agenda y apertura del detalle; resto del guion manual pendiente**. Resultados detallados en PRUEBAS.md.
+Auditoría del 01/11/2026. IDs del plan aprobado, no numeración original del PDF. «Cumplido» se refiere a la implementación y evidencia indicada; **el usuario confirmó creación, apariencia de agenda, apertura del detalle y reprogramación a un hueco libre con agenda actualizada y nota conservada; resto del guion manual pendiente**. Resultados detallados en PRUEBAS.md.
 
 | ID | Requisito | Implementación | Evidencia | Resultado |
 |---|---|---|---|---|
@@ -31,11 +31,11 @@ Criterios, dependencias y pruebas de diseño en [PLAN_AMPLIACION.md](PLAN_AMPLIA
 | ID | Función | Implementación principal | Evidencia |
 |---|---|---|---|
 | AM-01 | Huecos y alternativas | Dominio de sugerencias, consulta de solo lectura, API y panel separado | suggestions.test.ts; integración AM-01; propuesta obsoleta rechazada al reservar |
-| AM-02 | Reprogramación e historial | Versión, bloqueo ordenado, PUT y formulario de detalle | Integración AM-02: conservación, error atómico y carreras; validación unitaria de entrada |
+| AM-02 | Reprogramación e historial | Versión, bloqueo ordenado, PUT y formulario de detalle | Integración AM-02: conservación, error atómico y carreras; entrada unitaria; usuario confirmó cambio a hueco libre, actualización de agenda y nota conservada |
 | AM-03 | Agenda diaria | agenda.ts, DayAgenda, navegación y listado alternativo | agenda.test.ts, day-agenda.test.ts, SSR/HTTP; usuario confirmó apariencia y apertura de detalle |
 | AM-04 | Disponibilidad | Bloqueos por franja/rango, servicio transaccional y panel | availability.test.ts; integración AM-04, desplazamientos y carrera con reserva |
 | AM-05 | Fichas de obra | Perfil opcional de las obras existentes, API y catálogo/detalle | operations.test.ts; integración AM-05/06/07; actualización y lectura HTTP |
-| AM-06 | Notas, incidencias y resultados | Anotaciones opcionales en detalle, sin alterar disponibilidad | Validación de texto; integración conserva notas tras reprogramar/cancelar |
+| AM-06 | Notas, incidencias y resultados | Anotaciones opcionales en detalle, sin alterar disponibilidad | Validación de texto; integración conserva notas tras reprogramar/cancelar; usuario confirmó nota conservada tras reprogramar y reabrir detalle |
 | AM-07 | Tipos opcionales | Catálogo, duración manual y copia histórica de indicaciones | Integración: tipo desactivado, cambios no retroactivos y visitas antiguas sin tipo |
 | AM-08 | Avisos internos | Eventos, recordatorios Madrid, consulta visible y lectura por navegador | notifications.test.ts, notification-poller.test.ts; integración AM-08 y flujo combinado |
 

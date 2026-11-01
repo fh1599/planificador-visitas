@@ -16,7 +16,7 @@ Fecha civil de Madrid, minutos enteros e intervalos con final excluido. Visitas 
 
 107 pruebas unitarias y 47 de integración PostgreSQL superadas, con extremos, migración desde el esquema anterior, persistencia y concurrencia. Tipos, lint y compilación correctos. Un servidor Next compilado auxiliar pasó el flujo HTTP completo con base aislada, incluidas las ocho ampliaciones y su combinación. Instalación limpia y semilla reproducibles; condiciones y tiempos en README y PRUEBAS.
 
-El usuario confirmó creación, apariencia de la agenda y apertura del detalle. Quedan revisión real de móvil/teclado, validación personal del resto de acciones y publicación. Auditoría: producción sin avisos conocidos; pendiente un aviso moderado de minimatch en herramientas de desarrollo, documentado en SEGURIDAD. Demostración sin autenticación, con agenda compartida. Avisos internos con aplicación abierta/conectada, reloj del servidor y lectura por navegador; sin correo ni notificaciones con navegador cerrado.
+El usuario confirmó creación, agenda y detalle, además de reprogramación a un hueco libre con agenda actualizada y nota conservada al reabrir el detalle. Quedan revisión real de móvil/teclado, validación personal del resto de acciones y publicación. Auditoría: producción sin avisos conocidos; pendiente un aviso moderado de minimatch en herramientas de desarrollo, documentado en SEGURIDAD. Demostración sin autenticación, con agenda compartida. Avisos internos con aplicación abierta/conectada, reloj del servidor y lectura por navegador; sin correo ni notificaciones con navegador cerrado.
 
 ## Uso de IA y corrección real
 
