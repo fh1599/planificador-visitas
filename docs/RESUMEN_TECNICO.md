@@ -1,10 +1,10 @@
 # Planificador de visitas
 
-Prueba técnica Talent Clau - Resumen técnico - 01/11/2026
+Prueba técnica Talent Clau - Resumen técnico - 02/11/2026
 
 ## Implementación
 
-Agenda para cuatro técnicos y cuatro obras ficticias. Permite crear, filtrar y cancelar visitas, conservando las canceladas y liberando su horario. El servidor explica rechazos por solapamiento, jornada o desplazamiento. Se añadieron búsqueda de huecos, reprogramación con historial, agenda diaria, bloqueos de disponibilidad, fichas de obra, notas/incidencias/resultados opcionales, tipos de visita y avisos internos. El formulario básico conserva cinco campos; las funciones adicionales se abren aparte. Los tipos proponen duraciones editables y sus cambios no alteran visitas anteriores.
+Agenda para cuatro técnicos y cuatro obras ficticias. Permite crear, filtrar y cancelar visitas, conservando las canceladas y liberando su horario. El servidor explica rechazos por solapamiento, jornada o desplazamiento. Se añadieron búsqueda de huecos, reprogramación con historial, agenda diaria, bloqueos de disponibilidad, fichas de obra, notas/incidencias/resultados opcionales, tipos de visita y avisos internos. Estas mejoras reducen la búsqueda manual de horarios y reúnen la información operativa. El formulario básico conserva cinco campos; las funciones adicionales se abren aparte. Los tipos proponen duraciones editables y sus cambios no alteran visitas anteriores.
 
 ## Decisiones y supuestos
 
@@ -14,9 +14,9 @@ Fecha civil de Madrid, minutos enteros e intervalos con final excluido. Visitas 
 
 ## Verificación y pendientes
 
-107 pruebas unitarias y 47 de integración PostgreSQL superadas, con extremos, migración desde el esquema anterior, persistencia y concurrencia. Tipos, lint y compilación correctos. Un servidor Next compilado auxiliar pasó el flujo HTTP completo con base aislada, incluidas las ocho ampliaciones y su combinación. Instalación limpia y semilla reproducibles; condiciones y tiempos en README y PRUEBAS.
+107 pruebas unitarias y 47 de integración PostgreSQL superadas, con extremos, migración desde el esquema anterior, persistencia y concurrencia. Tipos, lint y compilación correctos. Un servidor Next compilado auxiliar pasó el flujo HTTP completo con base aislada, incluidas las ocho ampliaciones y su combinación. GitHub y demo Vercel Hobby publicados; flujo HTTP público y creación, recarga, detalle y nota en navegador comprobados. Instalación reproducible documentada.
 
-El usuario confirmó creación, agenda y detalle, además de reprogramación a un hueco libre con agenda actualizada y nota conservada al reabrir el detalle. Quedan revisión real de móvil/teclado, validación personal del resto de acciones y publicación. Auditoría: producción sin avisos conocidos; pendiente un aviso moderado de minimatch en herramientas de desarrollo, documentado en SEGURIDAD. Demostración sin autenticación, con agenda compartida. Avisos internos con aplicación abierta/conectada, reloj del servidor y lectura por navegador; sin correo ni notificaciones con navegador cerrado.
+El usuario confirmó creación, agenda y detalle, además de reprogramación a un hueco libre con agenda actualizada y nota conservada al reabrir el detalle. Quedan revisión móvil/teclado y validación personal del resto de acciones. Auditoría del 01/11: producción sin avisos conocidos; pendiente un aviso moderado de minimatch en herramientas de desarrollo, documentado en SEGURIDAD. Demostración sin autenticación, con agenda compartida. Avisos internos con aplicación abierta/conectada, reloj del servidor y lectura por navegador; sin correo ni notificaciones con navegador cerrado.
 
 ## Uso de IA y corrección real
 

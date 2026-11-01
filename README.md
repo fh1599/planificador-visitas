@@ -2,6 +2,14 @@
 
 Prueba técnica: una agenda para cuatro técnicos que visitan obras. Permite buscar huecos, programar, reprogramar y cancelar visitas, consultar una agenda visual y gestionar la disponibilidad, con todas las reglas validadas en el servidor.
 
+## Enlaces de entrega
+
+- [Aplicación publicada](https://planificador-visitas-neon.vercel.app)
+- [Repositorio público](https://github.com/fh1599/planificador-visitas)
+- [Resumen técnico de una página](docs/RESUMEN_TECNICO.pdf)
+
+Demo compartida con datos ficticios, sin registro. Permite crear y modificar visitas. Usa una fecha libre para probar; puedes abrir una visita para reprogramar, anotar o cancelar. La agenda empieza en hoy (Madrid); Limpiar permite consultar otras fechas en el listado. La base publicada está separada de las bases local y de pruebas.
+
 ## Funciones
 
 - Catálogos de cuatro técnicos y cuatro obras ficticias.
@@ -123,7 +131,7 @@ Para cambiar el esquema, edita `src/db/schema.ts`, ejecuta `npm run db:generate`
 - Reprogramar mantiene el ID, el tipo y las notas. Las versiones evitan sobrescribir una edición más reciente; los técnicos se bloquean en orden estable. Cambiar un tipo no altera duración ni pautas de visitas anteriores.
 - La ficha permite editar datos operativos de las cuatro obras existentes; no se añade administración de técnicos u obras.
 - Los avisos son compartidos, internos y requieren la aplicación abierta/conectada. Se actualizan cada 30 s visibles y al recuperar el foco. La lectura se guarda por navegador. Actividad: últimos 50 cambios de siete días; historial de cada visita conservado completo. No hay correo ni notificaciones con navegador cerrado.
-- Aplicación de demostración con datos ficticios y sin autenticación. Si se publica, cualquier visitante con acceso podrá consultar y modificar la agenda; el despliegue se decide expresamente. La comprobación de origen del navegador no sustituye autenticación.
+- Aplicación de demostración con datos ficticios y sin autenticación. En la demo publicada, cualquier visitante con acceso puede consultar y modificar la agenda. La comprobación de origen del navegador no sustituye autenticación.
 - Las escrituras deben pasar por el servicio: las restricciones SQL protegen campos y referencias, pero las reglas entre distintas filas se garantizan en la transacción del servicio. Una escritura SQL externa puede omitir esas reglas.
 - Las sugerencias son deterministas y revisan minutos enteros con las mismas reglas de reserva. No hay servicios de IA en ejecución.
 
@@ -131,4 +139,6 @@ Para cambiar el esquema, edita `src/db/schema.ts`, ejecuta `npm run db:generate`
 
 La [explicación técnica](docs/RESUMEN_TECNICO.md), también disponible en [PDF de una página](docs/RESUMEN_TECNICO.pdf), resume decisiones, pendientes, supuestos y una corrección real del contenido generado por IA. El [diario](docs/DIARIO_DESARROLLO.md) conserva las incidencias y su verificación. El [estado del proyecto](docs/ESTADO_PROYECTO.md) distingue lo implementado, comprobado y pendiente.
 
-La publicación del repositorio y el despliegue están pendientes de autorización. No se incluyen el PDF original, conversaciones privadas ni credenciales en el contenido de entrega.
+Repositorio y demo publicados el 02/11/2026. La URL pública pasó las comprobaciones HTTP de las ocho ampliaciones; en navegador se verificaron creación, persistencia tras recarga, detalle y nota. La inspección móvil/teclado sigue pendiente. No se incluyen el PDF original, conversaciones privadas ni credenciales en el contenido de entrega.
+
+Despliegue directo con Vercel CLI sobre el plan Hobby. La integración automática con GitHub no está configurada: actualizar el repositorio no despliega por sí solo. La conexión DATABASE_URL se guarda como secreto de producción en Vercel; no se necesita la base de pruebas para ejecutar la demo.

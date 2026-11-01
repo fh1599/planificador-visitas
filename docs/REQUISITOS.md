@@ -1,6 +1,6 @@
 # Matriz de requisitos
 
-Auditoría del 01/11/2026. IDs del plan aprobado, no numeración original del PDF. «Cumplido» se refiere a la implementación y evidencia indicada; **el usuario confirmó creación, apariencia de agenda, apertura del detalle y reprogramación a un hueco libre con agenda actualizada y nota conservada; resto del guion manual pendiente**. Resultados detallados en PRUEBAS.md.
+Estado actualizado el 02/11/2026. IDs del plan aprobado, no numeración original del PDF. «Cumplido» se refiere a la implementación y evidencia indicada; **el usuario confirmó creación, apariencia de agenda, apertura del detalle y reprogramación a un hueco libre con agenda actualizada y nota conservada; resto del guion manual pendiente**. Resultados detallados en PRUEBAS.md.
 
 | ID | Requisito | Implementación | Evidencia | Resultado |
 |---|---|---|---|---|
@@ -15,11 +15,11 @@ Auditoría del 01/11/2026. IDs del plan aprobado, no numeración original del PD
 | RT-01 | Base relacional | PostgreSQL, Drizzle y SQL versionado | Migración inicial, INT-01, ENT-01 | Cumplido |
 | RT-02 | Validación servidor | Zod, reglas y bloqueos | Peticiones directas inválidas y concurrencia | Cumplido |
 | RT-03 | Sin secretos versionados | Variables privadas y gitignore | ENT-02, revisión de entrega | Cumplido en preparación local |
-| EN-01 | GitHub público, código, migración y semilla | Repositorio local preparado | Sin URL pública todavía | Parcialmente cumplido; publicación pendiente |
+| EN-01 | GitHub público, código, migración y semilla | [Repositorio publicado](https://github.com/fh1599/planificador-visitas) | Público, rama main y contenido comprobados | Cumplido |
 | EN-02 | README y arranque <10 min | README, lockfile y scripts | ENT-01 ampliado: 14,30 s con prerrequisitos listos | Cumplido en el entorno probado |
 | EN-03 | Explicación de una página | Resumen técnico y PDF | ENT-04 | Cumplido; PDF de una página revisado |
 | EN-04 | Uso de IA y corrección real | Diario, resumen y REG-001 | Fallo reproducido, corregido y verificado | Cumplido |
-| OP-01 | Despliegue opcional | No iniciado | Decisión posterior | Pendiente, opcional |
+| OP-01 | Despliegue opcional | [Demo Vercel](https://planificador-visitas-neon.vercel.app) | HTTP sin sesión y flujo real comprobados; navegador escritorio | Cumplido |
 | OP-02 | Sugerir horarios | Implementado como AM-01 | Unitarias, integración y HTTP | Cumplido; revisión personal pendiente |
 
 Tipos, lint y build correctos. Últimos resultados: 107 unitarias, 47 integraciones y flujo HTTP real de las ocho ampliaciones. La auditoría actual de producción no señala vulnerabilidades conocidas; la completa tiene un aviso moderado de minimatch propagado a 18 paquetes de desarrollo. Detalle en SEGURIDAD.md. Demostración con datos ficticios y sin autenticación.
@@ -41,4 +41,4 @@ Criterios, dependencias y pruebas de diseño en [PLAN_AMPLIACION.md](PLAN_AMPLIA
 
 Las migraciones se ensayaron desde el esquema original con visitas programadas/canceladas en un esquema aislado de la base de pruebas. Se conservaron identificadores, referencias, horarios, estados y fechas de creación. El núcleo RF/RT/EN sigue siendo obligatorio.
 
-REG-001 cubre el origen normalizado por Next. REG-002 cubre conexión y respuestas ilegibles; no se reenvían escrituras inciertas automáticamente. La revisión móvil/teclado y el resto de validación personal siguen pendientes, al igual que GitHub y la decisión de despliegue.
+REG-001 cubre el origen normalizado por Next. REG-002 cubre conexión y respuestas ilegibles; no se reenvían escrituras inciertas automáticamente. La revisión móvil/teclado y el resto de validación personal siguen pendientes, y el envío del correo de entrega. GitHub y la demo ya están publicados.

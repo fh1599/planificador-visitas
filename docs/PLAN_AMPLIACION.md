@@ -1,6 +1,6 @@
 # Plan de ampliación del planificador
 
-Fecha: 01/11/2026. Alcance seleccionado por el usuario: ocho funciones. Canal de avisos confirmado: dentro de la aplicación. El plan inicial y sus decisiones se conservan abajo como referencia histórica. Estado actual: ocho funciones implementadas y verificadas automáticamente; cierre documental preparado, revisión móvil/teclado y resto de validación personal pendientes. Publicación no iniciada.
+Fecha: 01/11/2026. Alcance seleccionado por el usuario: ocho funciones. Canal de avisos confirmado: dentro de la aplicación. El plan inicial y sus decisiones se conservan abajo como referencia histórica. Estado actual: ocho funciones implementadas y verificadas automáticamente; cierre documental preparado, revisión móvil/teclado y resto de validación personal pendientes. GitHub y demo publicados el 02/11/2026; envío del correo pendiente.
 
 ## 1. Alcance cerrado y prioridades de uso
 
@@ -212,3 +212,10 @@ Fase 8.1–8.5: 107 unitarias, 47 integraciones, tipos/lint/build y flujo HTTP d
 Fase 8.6: el usuario confirmó creación, apariencia de agenda, apertura del detalle y, posteriormente, reprogramación a un horario libre con actualización de agenda y nota conservada al reabrir el detalle. Resto del guion personal pendiente. Fase 8.7: documentación actualizada, resumen de una página y paquete desde commit, con revisión de secretos y manifiesto de entrega. Se documenta el aviso moderado de minimatch en herramientas de desarrollo; producción sin avisos conocidos en la consulta actual.
 
 No se añaden funciones al alcance cerrado. Quedan la aceptación visual/personal indicada, el seguimiento de dependencias y la fase 9 de publicación. El repositorio público es un requisito de entrega; el despliegue es opcional y conserva su decisión separada.
+
+
+## Fase 9 — Publicación realizada, 02/11/2026
+
+El usuario decidió mantener el diseño actual y minimizar el tiempo de cierre. Indicó publicar en fh1599 y completó el alta de Vercel Hobby y la autorización de CLI. Repositorio público con el contenido verificado y el historial conservado mediante correo noreply; demo desplegada por CLI con una base nueva visitas_demo, migraciones y catálogos ficticios. La integración GitHub/Vercel no se configuró por permisos de la integración; el despliegue directo funciona.
+
+La URL pública responde sin iniciar sesión. Se verificaron por HTTP las ocho funciones, rechazos y persistencia. En navegador: crear, recargar, abrir detalle y añadir nota. Se conserva una visita ficticia identificada como demostración. Se actualizan README, resumen y entregables con enlaces reales. No se aplican mejoras visuales nuevas. Quedan la revisión móvil/teclado, otras validaciones personales y el envío del correo, que se prepara sin enviarlo.

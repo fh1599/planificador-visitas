@@ -139,3 +139,14 @@ Se actualizan README, estado, matriz, plan, pruebas y resumen de una página par
 ## 01/11/2026 — Validación personal de reprogramación con nota
 
 El usuario respondió «Sí, se actualiza y conserva la nota» a la comprobación de añadir una nota opcional, reprogramar la visita de prueba a un horario libre y volver a abrir el detalle. Se registra como confirmación personal de ese flujo y de la actualización visible de la agenda. No se infieren pruebas de conflictos, concurrencia, cancelación, otros tipos de seguimiento, bloqueos, avisos, móvil o teclado. Se actualizan documentación y paquete; el código funcional y los resultados automáticos anteriores no cambian ni se presentan como nuevas ejecuciones.
+
+
+## 02/11/2026 — Publicación y comprobación de la URL real
+
+Repositorio público: https://github.com/fh1599/planificador-visitas. Demo: https://planificador-visitas-neon.vercel.app. Vercel Hobby confirmado y despliegue READY mediante CLI 65.9.0, ID dpl_Fbjq4j9tDNVUDwZ6BfK8nRSq6Uh8. La URL principal devuelve HTTP 200 sin cookies ni autenticación. La conexión se configuró como secreto de producción y apunta a visitas_demo, separada de las bases local y de integración.
+
+El flujo HTTP real pasó catálogos, ficha, tipo, bloqueo, sugerencias, creación, nota, reprogramación, versión antigua, filtros, cancelación con historial, reutilización y avisos. También se verificaron origen externo rechazado, jornada, solapamiento y desplazamiento de 15/30 minutos. Los fixtures propios se retiraron; no se tocaron visitas locales. Durante la preparación del script de verificación se corrigieron la importación ESM de postgres y la expectativa del rechazo de jornada (409 WORKING_HOURS, no 400); no fue necesario cambiar la aplicación.
+
+La herramienta de navegador accedió a la nueva URL pública: creación de Carlos/Can Roca el 02/11/2026 de 09:00–10:00, persistencia tras recarga, apertura del detalle #4 y nota guardada. Ese registro ficticio se conserva como demostración, expresamente identificado en la nota. Inspección móvil/teclado y otras acciones personales pendientes; no se amplía el alcance de la comprobación de escritorio.
+
+El usuario pidió conservar el diseño actual. No se alteraron funciones, estilos ni dependencias. Se mantienen los resultados previos de 107 unitarias y 47 integraciones; no se presentan como una nueva ejecución. Se publicó una copia con idéntico contenido e historial, sustituyendo el correo personal de los commits por el noreply de GitHub. La vinculación automática Vercel/GitHub falló por permisos de integración; se completó el despliegue directo por CLI. Los próximos cambios requerirán un nuevo despliegue explícito mientras no se configure esa integración. Correo de entrega preparado, no enviado.
