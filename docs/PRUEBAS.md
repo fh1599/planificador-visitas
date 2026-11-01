@@ -1,18 +1,20 @@
 # Pruebas y resultados
 
-Ejecuciones: 30/10–01/11/2026, macOS arm64, Node 26.10.0, npm 11.19.1 y PostgreSQL 18 en Neon Free. Casos previstos en PLAN.md (§9–10). Código del hito local de núcleo y entrega preparados.
+Ejecuciones: 30/10–01/11/2026, macOS arm64, Node 26.10.0, npm 11.19.1 y PostgreSQL 18 en Neon Free. Casos originales en PLAN.md (§9–10) y ampliaciones en PLAN_AMPLIACION.md. La tabla inicial refleja el estado actual; los apartados históricos conservan las cifras de cada hito.
 
 ## Batería automática
 
 | Comando | Resultado |
 |---|---|
-| `npm test` | **79 pruebas superadas**, cuatro archivos: entradas, planificación, origen HTTP y conexión del cliente. |
-| `npm run test:integration` | **21 pruebas superadas**, PostgreSQL real y conexiones independientes. Última ejecución: 18,57 s. |
+| `npm test` | **107 pruebas superadas**, 11 archivos; última ejecución tras los ajustes de interacción de fase 7. |
+| `npm run test:integration` | **47 pruebas superadas**, PostgreSQL real, actualización de esquema y concurrencia. Última ejecución completa en fase 6: 91,94 s; reglas y escrituras sin cambios desde entonces. |
+| `npm run test:http` | Flujo completo correcto contra Next compilado auxiliar y base aislada; las ocho ampliaciones, persistencia y rechazos comprobados. |
 | `npm run typecheck` | Sin errores. |
 | `npm run lint` | Sin errores ni avisos. |
 | `npm run build` | Producción compilada correctamente; página y endpoints dinámicos. |
 | `npm run db:generate` | Migración generada; repetición sin cambios de esquema. |
-| `npm audit` y `npm audit --omit=dev` | Cero vulnerabilidades conocidas tras ajustar esbuild transitivo. |
+| `npm audit --omit=dev` | Cero vulnerabilidades conocidas en la consulta del 01/11/2026. |
+| `npm audit` | Un aviso moderado de minimatch propagado a 18 paquetes de desarrollo; 0 altos/críticos. Pendiente compatible, documentado en SEGURIDAD.md. |
 
 ### Cobertura relevante
 
@@ -25,9 +27,9 @@ Ejecuciones: 30/10–01/11/2026, macOS arm64, Node 26.10.0, npm 11.19.1 y Postgr
 - INT-06: dos conexiones independientes intentan simultáneamente solaparse o dejar solo 15 min entre obras: solo una reserva se confirma. Técnicos diferentes pueden coincidir.
 - REG-001: origen externo `127.0.0.1` con URL interna `localhost`; aceptación correcta y rechazo de host/puerto/protocolo distintos u origen `null`.
 
-Integración exige una conexión separada cuyo nombre termine en `_test` y sea distinto del de la base principal. Borra sus visitas entre casos y al terminar. No ejecutar sobre datos que deban conservarse.
+Integración exige una conexión separada cuyo nombre termine en `_test` y sea distinto del de la base principal. Borra visitas, tipos, bloqueos y sus registros asociados entre casos y al terminar. No ejecutar sobre datos que deban conservarse.
 
-## Navegador: comprobaciones del agente
+## Navegador: comprobaciones históricas del núcleo por el agente
 
 No es una validación manual del usuario. Navegador integrado, aplicación real y base `visitas`.
 
@@ -45,9 +47,9 @@ No es una validación manual del usuario. Navegador integrado, aplicación real 
 | Limpiar filtros | Cinco filas ordenadas: cuatro Programadas y una Cancelada. |
 | `npm start` después del build | Agenda cargada desde PostgreSQL; 09:30–10:30 rechazado por solaparse con 09:00–10:00. Datos conservados. |
 
-Revisión visual de escritorio realizada. Adaptación CSS móvil implementada; inspección visual con tamaño móvil pendiente. La captura de entrega muestra los datos ficticios anteriores.
+Revisión visual de escritorio realizada. Adaptación CSS móvil implementada; inspección visual con tamaño móvil pendiente. La captura anterior corresponde al núcleo, no a la interfaz ampliada actual.
 
-## ENT-01: instalación desde copia limpia
+## ENT-01: ensayo histórico del núcleo desde copia limpia
 
 Copia sin `node_modules`, `.next`, Git ni credenciales compartidas. Caché npm inicialmente vacía. Se configuró privadamente la base de pruebas, que ya tenía esquema: este ensayo comprueba repetibilidad de migraciones y semilla. La migración sobre base vacía se comprobó en la preparación inicial, no se confunde con este ensayo.
 
@@ -83,7 +85,7 @@ Confirmación personal recibida el 01/11/2026: el usuario indicó que la visita 
 
 ## Diseño de pruebas de ampliación
 
-Los casos de AM-01–08 y las interacciones con el núcleo se definen antes de implementarlos en PLAN_AMPLIACION.md, fases 0–8 y matriz de interacciones. Son pruebas previstas; no se cuentan como ejecutadas. La confirmación del usuario se registrará por escenario.
+Los casos de AM-01–08 y las interacciones con el núcleo se definen antes de implementarlos en PLAN_AMPLIACION.md, fases 0–8 y matriz de interacciones. En aquel momento eran pruebas previstas; los resultados de ejecución constan en los hitos siguientes. La confirmación del usuario se registra por escenario.
 
 Fase 0 de ampliación, 01/11/2026: se repitieron 79 unitarias, TypeScript y lint, todos correctos. Integración falló al preparar la suite por conexión sin permiso de red (21 casos no ejecutados). Tras restablecer el permiso, las 21 pruebas de integración pasaron en 19,86 s. La base de la aplicación no se modificó.
 
@@ -116,3 +118,25 @@ Validación personal: el usuario confirmó que la agenda diaria se ve bien y al 
 ## Ampliación — comprobación HTTP de producción
 
 `npm run test:http` correcto tras compilar la fase 7. Un proceso auxiliar Next, con puerto propio verificado y DATABASE_URL de *_test, recibió peticiones HTTP reales con Origin/Host. Recorrió las ocho funciones y los rechazos de versión obsoleta, bloqueo y solapamiento; comprobó notas/historial tras cancelar, reutilización y avisos. Limpieza de fixtures realizada. No se modificó ninguna visita del usuario. 107 unitarias, tipos/lint/build y diff correctos después de ajustes de interacción. Última integración completa: 47 correctas en fase 6; las reglas/escrituras no han cambiado desde esa ejecución.
+
+## ENT-01 ampliado: instalación limpia y repetibilidad
+
+Versión ampliada, código funcional de fase 7. Copia sin dependencias, compilados ni Git y caché npm inicialmente vacía. La conexión se configuró solo en la copia privada contra la base de pruebas, que ya tenía el esquema: este ensayo comprueba instalación limpia del código e idempotencia de migraciones/semilla, no una base vacía. El ensayo de actualización desde el esquema original pertenece a integración; las bases vacías se migraron al preparar el núcleo.
+
+| Paso | Tiempo |
+|---|---:|
+| Instalación con `npm ci` | 7,26 s |
+| Migraciones | 1,05 s |
+| Semilla | 1,24 s |
+| Arranque de desarrollo y primera página HTTP 200 | 4,75 s |
+| **Total** | **14,30 s** |
+
+Node, npm, red y PostgreSQL estaban disponibles. Se excluyen alta del proveedor, instalación de Node y preparación manual de la conexión; el tiempo no es una garantía para otras redes/equipos. Se detuvo el auxiliar y se eliminaron copia temporal y caché de ensayo; no se modificaron datos del usuario.
+
+## Cierre local y límites de aceptación
+
+La documentación y el resumen se actualizan para las ocho ampliaciones. Se revisan los archivos versionados, historial y ZIP buscando valores privados conocidos y patrones de credenciales. El paquete se genera desde un commit local; el manifiesto externo de entrega identifica commit, archivos y sumas SHA-256. El PDF se renderiza e inspecciona y debe conservar una página.
+
+La auditoría de dependencias se registra con su resultado actual en SEGURIDAD.md; el resultado histórico de cero avisos del núcleo no describe la consulta más reciente. No se cambian dependencias durante este cierre documental.
+
+Quedan pendientes interacción real de móvil/teclado y confirmación personal del resto de acciones ampliadas. La confirmación recibida cubre creación, apariencia de agenda y apertura de detalle. La herramienta de navegador bloqueó el acceso; HTTP y SSR no prueban foco real, disposición móvil ni clics en todos los formularios. GitHub público y el despliegue opcional siguen pendientes de sus decisiones de publicación.

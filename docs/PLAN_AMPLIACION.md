@@ -1,6 +1,6 @@
 # Plan de ampliación del planificador
 
-Fecha: 01/11/2026. Alcance seleccionado por el usuario: ocho funciones. Canal de avisos confirmado: dentro de la aplicación. Este documento define el orden, las decisiones propuestas, los criterios y las pruebas; no declara implementadas las ampliaciones.
+Fecha: 01/11/2026. Alcance seleccionado por el usuario: ocho funciones. Canal de avisos confirmado: dentro de la aplicación. El plan inicial y sus decisiones se conservan abajo como referencia histórica. Estado actual: ocho funciones implementadas y verificadas automáticamente; cierre documental preparado, revisión móvil/teclado y resto de validación personal pendientes. Publicación no iniciada.
 
 ## 1. Alcance cerrado y prioridades de uso
 
@@ -201,3 +201,14 @@ Fase 4 (4.1–4.5): AM-01 implementado. 96 unitarias + 43 integraciones, tipos/l
 Fase 5: agenda diaria y acceso común a acciones implementados; 101 unitarias, tipos/lint/build y renderizado HTTP correctos. Se conservan 43 integraciones correctas del hito anterior. La aceptación visual/teclado/móvil está pendiente; el diseño incorpora desplazamiento horizontal y acceso adicional a visitas cortas. Continúa fase 6, avisos internos.
 
 Fase 6 (6.1–6.5): AM-08 implementado. 107 unitarias + 47 integraciones, tipos/lint/build y API de avisos correctos. Lectura por navegador, actividad compartida de visitas/bloqueos y recordatorios de 30 minutos con actualización visible. El usuario confirmó apariencia de agenda y apertura del detalle. Restan acabado/accesibilidad y cierre de verificación/entrega; móvil/teclado y otras acciones personales aún pendientes.
+
+
+## Cierre local de fases 7 y 8, 01/11/2026
+
+Fase 7: dirección visual mantenida tras la confirmación del usuario; ajustes de legibilidad, contraste, foco visible, tamaños táctiles y mensajes de creación. Corregido el foco de la agenda vacía para dirigirlo a Obra, no al selector opcional plegado. La aceptación real de móvil/teclado y el resto de estados visuales sigue pendiente por el límite de acceso del navegador. No se declara completada esa inspección.
+
+Fase 8.1–8.5: 107 unitarias, 47 integraciones, tipos/lint/build y flujo HTTP de las ocho funciones correctos. Actualización desde el esquema original verificada en base aislada. Ensayo desde copia limpia con caché vacía: 14,30 s con prerrequisitos disponibles; migración repetida sobre esquema de prueba existente. Condiciones exactas en PRUEBAS.md.
+
+Fase 8.6: confirmación del usuario limitada a creación, apariencia de agenda y apertura del detalle. Resto del guion personal pendiente. Fase 8.7: documentación actualizada, resumen de una página y paquete desde commit, con revisión de secretos y manifiesto de entrega. Se documenta el aviso moderado de minimatch en herramientas de desarrollo; producción sin avisos conocidos en la consulta actual.
+
+No se añaden funciones al alcance cerrado. Quedan la aceptación visual/personal indicada, el seguimiento de dependencias y la fase 9 de publicación. El repositorio público es un requisito de entrega; el despliegue es opcional y conserva su decisión separada.

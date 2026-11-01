@@ -1,52 +1,40 @@
 # Estado del proyecto
 
-Actualizado: 01/11/2026. **Núcleo implementado y verificado automáticamente; creación confirmada por el usuario el 01/11/2026; resto de validación personal y publicación de GitHub pendientes.** La entrega externa todavía no está completada.
+Actualizado: 01/11/2026. **Núcleo y ocho ampliaciones implementados; comprobaciones automáticas y flujo HTTP completo superados.** Documentación y paquete de código preparados. La entrega externa sigue pendiente: falta publicar el repositorio público obligatorio y completar la revisión personal/visual indicada abajo.
 
-| Fase | Estado y evidencia |
+| Bloque | Estado y evidencia |
 |---|---|
-| 0–1: análisis y diseño | Plan aprobado, incluidos Neon Free y supuestos de fechas/desplazamientos. |
-| 2: estructura y persistencia | Next.js/TypeScript, esquema, migración y semilla operativos en PostgreSQL 18. |
-| 3: reglas y servidor | 79 pruebas unitarias y 21 de integración superadas; escrituras serializadas por técnico. |
-| 4: interfaz | Creación, consulta, filtros y cancelación comprobados por el agente en navegador de escritorio. Revisión visual móvil pendiente. |
-| 5: calidad | Tipos, lint y build correctos; creación confirmada por el usuario. Resto de validación personal pendiente. |
-| 6: ampliación seleccionada | Ocho funciones elegidas; plan y pruebas de diseño en PLAN_AMPLIACION.md. Avisos internos confirmados. Implementación pendiente. |
-| 7: entrega | Documentación preparada y ensayo de arranque de 18,66 s. GitHub público pendiente. |
+| Núcleo | Crear, reglas, cancelación persistente, orden y filtros operativos. Se mantienen las regresiones originales. |
+| AM-01: huecos | Hasta tres propuestas por huecos distintos; consulta sin reserva y revalidación al guardar. |
+| AM-02: reprogramación | Cambio atómico, versión, historial y conservación de notas. |
+| AM-03: agenda diaria | Cuatro columnas, visitas, bloqueos, desplazamientos y acceso al detalle; listado alternativo. |
+| AM-04: disponibilidad | Franjas/rangos de días; rechazos identifican visitas afectadas; concurrencia protegida. |
+| AM-05/06/07: información operativa | Fichas de obra, anotaciones opcionales y tipos con duración editable; cinco campos básicos conservados. |
+| AM-08: avisos | Recordatorios de 30 minutos y actividad compartida, lectura por navegador y actualización visible. |
+| Acabado | Estilo consistente, contraste, foco visible, controles táctiles y confirmación junto al formulario. Revisión real de móvil/teclado pendiente. |
+| Verificación | 107 unitarias, 47 integraciones PostgreSQL, tipos/lint/build y flujo HTTP real correctos. |
+| Entrega local | README, cinco migraciones, semilla, pruebas y resumen PDF de una página. Arranque desde copia limpia: 14,30 s con prerrequisitos listos. |
+| Dependencias | Producción: cero avisos conocidos. Desarrollo: un aviso moderado de minimatch propagado a 18 paquetes, pendiente de actualización compatible; ver SEGURIDAD.md. |
+| Publicación | GitHub público pendiente; despliegue opcional pendiente de decisión. No se ha enviado material a terceros. |
+
+## Qué se ha confirmado personalmente
+
+El usuario confirmó que una visita se guarda correctamente, que la agenda diaria se ve bien y que pulsar una visita abre su detalle. No se extiende esa confirmación a reprogramación, bloqueos, anotaciones, avisos, móvil o teclado. La herramienta de navegador rechazó el acceso durante la ampliación; no se eludió ese bloqueo. Las pruebas HTTP no sustituyen interacción visual.
 
 ## Recuperar el trabajo
 
-- Seguir el README. En el Mac de desarrollo existe `.env.local`, excluido de Git; no sobrescribirlo ni imprimirlo.
-- `npm run dev` inicia `http://127.0.0.1:3000`. La agenda inicial muestra hoy en Madrid; Limpiar muestra todas las fechas.
-- Neon Free contiene `visitas` para la aplicación y `visitas_test` para integración. Conexiones privadas en variables de entorno; los tests vacían exclusivamente sus visitas de prueba.
-- Se conservan ejemplos ficticios del 30/10/2026 y una visita de comprobación del 01/11/2026 cancelada tras verificarla. Puede haber nuevas visitas del usuario; no borrar ni modificar registros ajenos a una prueba. No forman parte de la semilla.
-- La semilla solo crea cuatro técnicos y cuatro obras, sin borrar ni duplicar catálogos ni visitas.
-- No hay errores bloqueantes conocidos tras las pruebas registradas. Incidencias y correcciones en el diario.
+- Seguir el README. La configuración privada existente está en `.env.local`, excluida de Git; no sobrescribirla ni imprimirla.
+- `npm run dev` inicia `http://127.0.0.1:3000`; mantener el proceso activo mientras se use la aplicación. Para producción local: `npm run build` y `npm start`.
+- La agenda comienza en hoy, Madrid. Limpiar elimina la fecha y muestra el listado completo.
+- PostgreSQL contiene una base principal y otra independiente terminada en `_test`. Las pruebas destructivas solo actúan en esta última; no usarla para datos que se quieran conservar ni ejecutar integración y HTTP simultáneamente.
+- Las cinco migraciones están aplicadas en la base principal. La semilla no borra visitas ni duplica los cuatro técnicos/obras. Se conservan las reservas del usuario.
+- Incidencias históricas: rechazo de origen normalizado por Next y servidor detenido con pestaña abierta. Correcciones y alcance de la verificación en DIARIO_DESARROLLO.md y PRUEBAS.md.
 
-## Siguiente acción
+## Trabajo restante
 
-Seguir PLAN_AMPLIACION.md: comprobar la base, diseñar las interacciones e implementar las ocho funciones por fases. La validación personal pendiente se integrará en los hitos. Publicar GitHub y desplegar mantienen sus decisiones posteriores; no enviar nada a Talent Clau sin instrucción expresa.
+1. Completar el guion personal de las ampliaciones y revisar móvil/teclado; registrar resultados concretos.
+2. Seguir el aviso de herramientas de desarrollo y actualizar cuando haya una solución compatible verificada.
+3. Con el contenido revisado, decidir el destino y autorizar la publicación del repositorio público. El ZIP no sustituye ese requisito.
+4. Decidir por separado el despliegue opcional y, si se autoriza, verificar la URL publicada. El envío a Talent Clau requiere instrucción expresa.
 
-Las comprobaciones del agente no sustituyen la validación personal. Condiciones y límites de las evidencias en PRUEBAS.md.
-
-## Incidencia de conexión del 01/11/2026
-
-El usuario encontró `Failed to fetch` con una pestaña abierta y el servidor detenido. Se restableció el servidor y se corrigieron los mensajes de errores de red/respuesta ilegible. REG-002 añade ocho pruebas. El flujo de creación/persistencia/rechazo/cancelación se repitió por HTTP real. La herramienta de navegador bloqueó el acceso en esta sesión; no se declara repetida la validación visual. Mantener el servidor activo durante la comprobación del usuario y explicar que la versión local depende de ese proceso.
-
-El usuario respondió «Ahora se guarda correctamente» tras recargar la versión corregida. Se considera confirmada la creación, no todo el guion MAN-01–06 ni la persistencia tras una segunda recarga.
-
-## Ampliación acordada el 01/11/2026
-
-El usuario seleccionó búsqueda de huecos, reprogramación, agenda visual, bloqueos, fichas de obra, seguimiento opcional, tipos sin complicar el formulario y avisos dentro de la aplicación. Solicitó fases/subfases y pruebas de diseño/regresión antes de implementar. PLAN_AMPLIACION.md concreta el alcance; notas no obligatorias y formulario sencillo son criterios de aceptación. El plan inicial se conserva como referencia histórica.
-
-Preparación de ampliación (0.1–0.3) completada: plan documentado y base comprobada de nuevo (79 unitarias + 21 integración; tipos y lint correctos). Siguiente bloque: 1.1, diseño de interacción, y 0.4/1.2, casos y diseño de migraciones.
-
-Avance posterior al plan: fase 1 de ampliación implementada (AM-05/06/07), migración aditiva aplicada y servidor local actualizado. 83 unitarias + 26 integraciones, tipos/lint/build correctos. Inspección visual nueva pendiente. Continuar fase 2 del plan de ampliación; el paquete previo todavía corresponde al núcleo.
-
-Avance fase 2: AM-04 implementado. 90 unitarias + 31 integraciones, tipos/lint/build y HTTP de lectura correctos. Las ausencias no cuentan como viaje; carrera bloqueo/reserva protegida. Continuar fase 3, reprogramación.
-
-Avance fase 3: AM-02 implementado. 91 unitarias; 38 integraciones completas y luego 9 AM-02 al ampliar la suite a 40, todas ejecutadas correctas. Tipos/lint/build y consultas HTTP correctos. Continuar fase 4; revisión visual/personal pendiente.
-
-Avance fase 4: búsqueda de huecos (AM-01) implementada. 96 unitarias + 43 integraciones, tipos/lint/build y HTTP correctos. Próxima fase: agenda visual diaria. Revisión visual/personal pendiente.
-
-Avance fase 5: AM-03 implementado; revisión visual/teclado/móvil pendiente. 101 unitarias y tipos/lint/build correctos; 43 integraciones del hito anterior. Próxima fase: AM-08, avisos internos.
-
-Avance fase 6: las ocho ampliaciones están implementadas. 107 unitarias + 47 integraciones, tipos/lint/build y HTTP de avisos correctos. El usuario confirmó vista de agenda y apertura del detalle. Continuar fases 7–8: revisión final de interacción/accesibilidad, ensayo limpio, documentación y paquete actualizado. Publicación sigue pendiente.
+Las fases y sus límites de aceptación se conservan en PLAN_AMPLIACION.md. No se da por cerrado el trabajo externo ni la revisión visual pendiente.

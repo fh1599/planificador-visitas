@@ -1,6 +1,6 @@
 # Matriz de requisitos
 
-Auditoría del 01/11/2026. IDs del plan aprobado, no numeración original del PDF. «Cumplido» se refiere a la implementación y evidencia indicada; **creación confirmada por el usuario el 01/11/2026; resto del guion manual pendiente**. Resultados detallados en PRUEBAS.md.
+Auditoría del 01/11/2026. IDs del plan aprobado, no numeración original del PDF. «Cumplido» se refiere a la implementación y evidencia indicada; **el usuario confirmó creación, apariencia de agenda y apertura del detalle; resto del guion manual pendiente**. Resultados detallados en PRUEBAS.md.
 
 | ID | Requisito | Implementación | Evidencia | Resultado |
 |---|---|---|---|---|
@@ -16,28 +16,29 @@ Auditoría del 01/11/2026. IDs del plan aprobado, no numeración original del PD
 | RT-02 | Validación servidor | Zod, reglas y bloqueos | Peticiones directas inválidas y concurrencia | Cumplido |
 | RT-03 | Sin secretos versionados | Variables privadas y gitignore | ENT-02, revisión de entrega | Cumplido en preparación local |
 | EN-01 | GitHub público, código, migración y semilla | Repositorio local preparado | Sin URL pública todavía | Parcialmente cumplido; publicación pendiente |
-| EN-02 | README y arranque <10 min | README, lockfile y scripts | ENT-01: 18,66 s con prerrequisitos listos | Cumplido en el entorno probado |
+| EN-02 | README y arranque <10 min | README, lockfile y scripts | ENT-01 ampliado: 14,30 s con prerrequisitos listos | Cumplido en el entorno probado |
 | EN-03 | Explicación de una página | Resumen técnico y PDF | ENT-04 | Cumplido; PDF de una página revisado |
 | EN-04 | Uso de IA y corrección real | Diario, resumen y REG-001 | Fallo reproducido, corregido y verificado | Cumplido |
 | OP-01 | Despliegue opcional | No iniciado | Decisión posterior | Pendiente, opcional |
-| OP-02 | Sugerir horarios | Planificado como AM-01 | Alcance adicional seleccionado | Pendiente de implementar |
+| OP-02 | Sugerir horarios | Implementado como AM-01 | Unitarias, integración y HTTP | Cumplido; revisión personal pendiente |
 
-Tipos, lint y build correctos. Auditoría npm sin vulnerabilidades conocidas al comprobarla; no equivale a una auditoría completa de seguridad. Demostración con datos ficticios y sin autenticación.
+Tipos, lint y build correctos. Últimos resultados: 107 unitarias, 47 integraciones y flujo HTTP real de las ocho ampliaciones. La auditoría actual de producción no señala vulnerabilidades conocidas; la completa tiene un aviso moderado de minimatch propagado a 18 paquetes de desarrollo. Detalle en SEGURIDAD.md. Demostración con datos ficticios y sin autenticación.
 
-REG-002 añade comprobaciones de conexión y respuestas ilegibles del cliente. Servidor local restablecido tras el fallo comunicado; creación confirmada por el usuario tras recargar. Resto de validación manual pendiente.
+## Ampliación implementada
 
-## Ampliación seleccionada
+Criterios, dependencias y pruebas de diseño en [PLAN_AMPLIACION.md](PLAN_AMPLIACION.md). «Implementado» no implica aceptación visual/personal completa. Todas las ampliaciones se recorrieron además en `scripts/smoke-http.ts` contra un servidor Next compilado con base aislada.
 
-AM-01–08, criterios de aceptación, dependencias y pruebas previstas en [PLAN_AMPLIACION.md](PLAN_AMPLIACION.md). Estado de todos ellos: planificados, implementación y verificación pendientes. Se mantienen las obligaciones del núcleo RF/RT/EN.
+| ID | Función | Implementación principal | Evidencia |
+|---|---|---|---|
+| AM-01 | Huecos y alternativas | Dominio de sugerencias, consulta de solo lectura, API y panel separado | suggestions.test.ts; integración AM-01; propuesta obsoleta rechazada al reservar |
+| AM-02 | Reprogramación e historial | Versión, bloqueo ordenado, PUT y formulario de detalle | Integración AM-02: conservación, error atómico y carreras; validación unitaria de entrada |
+| AM-03 | Agenda diaria | agenda.ts, DayAgenda, navegación y listado alternativo | agenda.test.ts, day-agenda.test.ts, SSR/HTTP; usuario confirmó apariencia y apertura de detalle |
+| AM-04 | Disponibilidad | Bloqueos por franja/rango, servicio transaccional y panel | availability.test.ts; integración AM-04, desplazamientos y carrera con reserva |
+| AM-05 | Fichas de obra | Perfil opcional de las obras existentes, API y catálogo/detalle | operations.test.ts; integración AM-05/06/07; actualización y lectura HTTP |
+| AM-06 | Notas, incidencias y resultados | Anotaciones opcionales en detalle, sin alterar disponibilidad | Validación de texto; integración conserva notas tras reprogramar/cancelar |
+| AM-07 | Tipos opcionales | Catálogo, duración manual y copia histórica de indicaciones | Integración: tipo desactivado, cambios no retroactivos y visitas antiguas sin tipo |
+| AM-08 | Avisos internos | Eventos, recordatorios Madrid, consulta visible y lectura por navegador | notifications.test.ts, notification-poller.test.ts; integración AM-08 y flujo combinado |
 
-Actualización fase 1: AM-05, AM-06 y AM-07 implementados en esquema, servicios, rutas y componentes de catálogo/detalle. Evidencia automática: operations.test.ts y grupo AM-05/06/07 de integración. Revisión visual/personal pendiente. AM-01/02/03/04/08 continúan pendientes.
+Las migraciones se ensayaron desde el esquema original con visitas programadas/canceladas en un esquema aislado de la base de pruebas. Se conservaron identificadores, referencias, horarios, estados y fechas de creación. El núcleo RF/RT/EN sigue siendo obligatorio.
 
-AM-04 implementado: availability.ts, servicio transaccional, rutas /api/blocks y panel. Evidencia: availability.test.ts y grupo AM-04 de integración; revisión visual pendiente.
-
-AM-02 implementado: rescheduleInputSchema, PUT, servicio con versión y bloqueo ordenado, snapshot/historial y formulario de detalle. Evidencia AM-02 de integración, entrada unitaria y HTTP de consulta. Revisión visual pendiente.
-
-AM-01/OP-02 implementados: suggestSlots, consulta de solo lectura, /api/suggestions y panel que aplica al formulario sin reservar. Evidencia: suggestions.test.ts y AM-01 de integración; revalidación de propuesta obsoleta verificada.
-
-AM-03 implementado: agenda.ts, DayAgenda, cambio de vista y navegación diaria, acciones comunes en detalle. Evidencia: agenda.test.ts, renderizado SSR y HTTP. La aceptación visual, móvil y teclado continúa pendiente.
-
-AM-08 implementado: eventos transaccionales, reloj/recordatorios Madrid, /api/notifications, actualización visible y lectura por navegador. Evidencia: notifications.test.ts, notification-poller.test.ts y AM-08 de integración. Las ocho ampliaciones tienen implementación y pruebas; comprobación personal confirmada únicamente para vista de agenda/apertura de detalle, además de creación del núcleo.
+REG-001 cubre el origen normalizado por Next. REG-002 cubre conexión y respuestas ilegibles; no se reenvían escrituras inciertas automáticamente. La revisión móvil/teclado y el resto de validación personal siguen pendientes, al igual que GitHub y la decisión de despliegue.
