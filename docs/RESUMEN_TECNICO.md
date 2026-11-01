@@ -1,6 +1,6 @@
 # Planificador de visitas
 
-Prueba técnica Talent Clau · Resumen técnico · 31/10/2026
+Prueba técnica Talent Clau · Resumen técnico · 01/11/2026
 
 ## Implementación
 
@@ -14,9 +14,9 @@ Se guardan fecha civil de Madrid, inicio en minutos y duración entera positiva.
 
 ## Verificación y pendientes
 
-Superadas 71 pruebas unitarias y 21 de integración con PostgreSQL, incluidas restricciones, persistencia, filtros y concurrencia desde conexiones independientes. Tipos, lint y compilación correctos. Flujos principales comprobados en navegador de escritorio. Arranque desde copia limpia en 18,66 s con Node, red y PostgreSQL disponibles; instrucciones en README. Migración y semilla reproducibles.
+Superadas 79 pruebas unitarias y 21 de integración con PostgreSQL, incluidas restricciones, persistencia, filtros y concurrencia desde conexiones independientes. Tipos, lint y compilación correctos. Flujos principales comprobados en navegador de escritorio. Arranque desde copia limpia en 18,66 s con Node, red y PostgreSQL disponibles; instrucciones en README. Migración y semilla reproducibles.
 
-Pendientes: validación personal del usuario, revisión visual móvil y publicación del repositorio público. Despliegue y sugerencias de horarios son opcionales y no se han implementado. Es una demostración sin autenticación; todas las escrituras deben pasar por el servicio para conservar las reglas entre visitas.
+El usuario confirmó la creación tras la corrección de conexión. Pendientes: resto de validación personal, revisión visual móvil y publicación del repositorio público. Despliegue y sugerencias de horarios son opcionales y no se han implementado. Es una demostración sin autenticación; todas las escrituras deben pasar por el servicio para conservar las reglas entre visitas.
 
 ## Uso de IA y corrección real
 

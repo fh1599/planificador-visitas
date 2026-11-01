@@ -59,3 +59,15 @@ Se recuperó el resultado pendiente en producción: una visita 09:30–10:30 par
 Se guardó una captura del historial, se preparó el guion de validación personal y se actualizó la auditoría. No se atribuye ninguna prueba manual al usuario ni se da por publicado el repositorio.
 
 Revisión ENT-02: 41 archivos de entrega inspeccionados, sin coincidencias con las conexiones/contraseña privadas ni patrones de claves; `.env.local` ignorado por Git. No se incluyen rutas personales, dependencias, compilados ni los documentos originales. El PDF revisado contiene una sola página. Se prepara un único commit del hito completo: las fases anteriores no se guardaron en commits separados y no se reconstruye un historial ficticio.
+
+## 01/11/2026 — Incidencia comunicada por el usuario y REG-002
+
+El usuario encontró «Failed to fetch» al programar. Se confirmó que el puerto 3000 no tenía servidor escuchando. El proceso de comprobación había sido detenido al cerrar el trabajo anterior, dejando la pestaña disponible pero sin servicio. Se reconoció el problema de entrega y se explicitó que la versión local necesita mantener el servidor en marcha. Esto no invalida las pruebas previas, pero descubre un caso de uso no cubierto por ellas.
+
+El primer reinicio fue bloqueado por EPERM en el puerto local. Se solicitó el permiso de red del entorno y el usuario lo concedió; el servidor arrancó. La herramienta de navegador rechazó observar la pestaña por política de acceso. Se continuó con pruebas de código y HTTP sin intentar eludir el bloqueo; la comprobación visual actual se deja pendiente.
+
+Se aisló la función de petición del cliente, conservando inicialmente su comportamiento, y se escribieron ocho regresiones. Cinco fallaron (mensajes crudos de red/respuesta ilegible y error HTTP sin cuerpo de error) y 74 pasaron. Tras la corrección, las 79 unitarias y las 21 de integración pasaron, al igual que tipos y lint. Ahora se explica la falta de respuesta en español, no se afirma que una escritura incierta no se guardó, se recomienda actualizar antes de repetirla y no se reenvían escrituras automáticamente.
+
+Por HTTP contra Next y la base principal se creó una visita ficticia propia, se consultó su persistencia, se rechazó el solapamiento y se canceló conservando el registro. No se modificaron visitas del usuario. Se actualizan instrucciones de arranque, pruebas, estado y entregables. La ejecución local se restablece para la validación en curso; no se presenta como un despliegue permanente.
+
+La compilación de producción terminó correctamente. El usuario recargó y confirmó que la visita ya se guarda. Se registra únicamente esa comprobación personal, manteniendo pendiente el resto del guion. La ejecución local queda activa para continuar la validación; no sustituye mantener el servidor en marcha en usos posteriores.

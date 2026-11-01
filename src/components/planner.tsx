@@ -5,16 +5,10 @@ import Link from "next/link";
 import { ArrowRight, CalendarDays, Check, CheckCircle2, Clock3, Filter, HardHat, Info, MapPin, Plus, RefreshCw, ShieldCheck, Users, X } from "lucide-react";
 import type { Catalogs, VisitRow } from "@/server/visits";
 import { displayDate, formatMinute } from "@/domain/time";
+import { api } from "@/client/api";
 
 type Filters = { date: string; technicianId: string };
 type Notice = { text: string; tone: "success" | "error" } | null;
-
-async function api<T>(url: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(url, { ...init, cache: "no-store" });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error?.message ?? "No se pudo completar la operación.");
-  return data as T;
-}
 
 export function Planner({ catalogs, initialVisits, today }: { catalogs: Catalogs; initialVisits: VisitRow[]; today: string }) {
   const [visits, setVisits] = useState(initialVisits);
@@ -154,7 +148,7 @@ export function Planner({ catalogs, initialVisits, today }: { catalogs: Catalogs
                 <label htmlFor="new-date">Fecha<input type="date" id="new-date" name="date" required defaultValue={today} /></label>
                 <div className="time-fields"><label htmlFor="new-time">Hora de inicio<input type="time" id="new-time" name="startTime" required min="08:00" max="16:59" step="60" value={startTime} onChange={(e) => setStartTime(e.target.value)} /></label><label htmlFor="new-duration">Duración <span className="label-unit">(min)</span><input type="number" id="new-duration" name="duration" required min="1" max="540" step="1" value={duration} onChange={(e) => setDuration(e.target.value)} /></label></div>
                 <div className="end-preview"><Clock3 size={15} aria-hidden="true" /><span>Finalización prevista</span><strong>{validEnd ? formatMinute(endMinute) : "—"}</strong></div>
-                {formError && <div className="form-error" role="alert"><strong>No se ha podido programar</strong><p>{formError}</p></div>}
+                {formError && <div className="form-error" role="alert"><strong>No se ha podido confirmar la visita</strong><p>{formError}</p></div>}
                 <button className="button primary create-submit" type="submit"><Plus size={17} aria-hidden="true" />{saving ? "Comprobando y guardando…" : "Programar visita"}</button>
               </fieldset>
             </form>

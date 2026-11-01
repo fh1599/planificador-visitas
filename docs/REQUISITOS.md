@@ -1,6 +1,6 @@
 # Matriz de requisitos
 
-Auditoría del 31/10/2026. IDs del plan aprobado, no numeración original del PDF. «Cumplido» se refiere a la implementación y evidencia indicada; **MAN-01–06 siguen pendientes de confirmación del usuario**. Resultados detallados en PRUEBAS.md.
+Auditoría del 01/11/2026. IDs del plan aprobado, no numeración original del PDF. «Cumplido» se refiere a la implementación y evidencia indicada; **creación confirmada por el usuario el 01/11/2026; resto del guion manual pendiente**. Resultados detallados en PRUEBAS.md.
 
 | ID | Requisito | Implementación | Evidencia | Resultado |
 |---|---|---|---|---|
@@ -23,3 +23,5 @@ Auditoría del 31/10/2026. IDs del plan aprobado, no numeración original del PD
 | OP-02 | Sugerir horarios | No iniciado | Fuera del núcleo | Pendiente, opcional |
 
 Tipos, lint y build correctos. Auditoría npm sin vulnerabilidades conocidas al comprobarla; no equivale a una auditoría completa de seguridad. Demostración con datos ficticios y sin autenticación.
+
+REG-002 añade comprobaciones de conexión y respuestas ilegibles del cliente. Servidor local restablecido tras el fallo comunicado; creación confirmada por el usuario tras recargar. Resto de validación manual pendiente.

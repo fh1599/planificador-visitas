@@ -1,13 +1,13 @@
 # Pruebas y resultados
 
-Ejecuciones: 30–31/10/2026, macOS arm64, Node 26.10.0, npm 11.19.1 y PostgreSQL 18 en Neon Free. Casos previstos en PLAN.md (§9–10). Código del hito local de núcleo y entrega preparados.
+Ejecuciones: 30/10–01/11/2026, macOS arm64, Node 26.10.0, npm 11.19.1 y PostgreSQL 18 en Neon Free. Casos previstos en PLAN.md (§9–10). Código del hito local de núcleo y entrega preparados.
 
 ## Batería automática
 
 | Comando | Resultado |
 |---|---|
-| `npm test` | **71 pruebas superadas**, tres archivos: entradas, planificación y origen HTTP. |
-| `npm run test:integration` | **21 pruebas superadas**, PostgreSQL real y conexiones independientes. Última ejecución: 17,86 s. |
+| `npm test` | **79 pruebas superadas**, cuatro archivos: entradas, planificación, origen HTTP y conexión del cliente. |
+| `npm run test:integration` | **21 pruebas superadas**, PostgreSQL real y conexiones independientes. Última ejecución: 18,57 s. |
 | `npm run typecheck` | Sin errores. |
 | `npm run lint` | Sin errores ni avisos. |
 | `npm run build` | Producción compilada correctamente; página y endpoints dinámicos. |
@@ -67,4 +67,16 @@ Revisión de archivos de Git y ZIP antes de empaquetar: conexiones privadas, dep
 
 ## Validación personal pendiente
 
-MAN-01–06 siguen **pendientes de confirmación del usuario**: crear/recargar, solapamiento, desplazamiento 15/30, jornada, cancelar/reutilizar y filtrar. Utilizar una fecha libre, por ejemplo 02/11/2026, para no interferir con los ejemplos del 30/10/2026. Las pruebas del agente no se atribuyen al usuario.
+MAN-01 está parcialmente confirmado (creación, 01/11/2026); el resto de MAN-01–06 sigue **pendiente de confirmación del usuario**: crear/recargar, solapamiento, desplazamiento 15/30, jornada, cancelar/reutilizar y filtrar. Utilizar una fecha libre, por ejemplo 02/11/2026, para no interferir con los ejemplos del 30/10/2026. Las pruebas del agente no se atribuyen al usuario.
+
+## 01/11/2026 — REG-002, servidor detenido y errores de conexión
+
+El usuario informó de `Failed to fetch`. Una comprobación de conexión al puerto 3000 devolvió ECONNREFUSED: el servidor local estaba detenido, aunque la página seguía abierta. Se restableció la ejecución local; no se atribuyó el fallo a PostgreSQL ni a las reglas.
+
+Se extrajo la petición del cliente a `src/client/api.ts` y se añadieron ocho casos antes de corregirla. Resultado inicial: cinco fallos y 74 aciertos. Después: **79 aciertos**. Se comprueban fallo de conexión, respuesta interrumpida/no JSON, ausencia de mensaje HTTP, conservación de errores de reglas/servicio y respuesta válida. Una escritura no se reintenta automáticamente cuando se desconoce su resultado.
+
+Además, el 01/11/2026 se llamó al servidor Next real por HTTP con el origen local: creación 201, consulta posterior que recuperó la fila, rechazo de duplicado 409 y cancelación 200 conservando la fila. Fixture: Ana Torres, Nave Industrial Can Jardí, 08:00–08:15 del 01/11/2026, ID 6, conservada Cancelada. No se tocaron visitas del usuario. Las 21 pruebas de integración con base separada volvieron a pasar; tipos y lint correctos. La compilación de producción terminó correctamente y el servidor se reinició con esa versión.
+
+Límite de esta ejecución: la herramienta de navegador rechazó acceder a la pestaña por su política de acceso. No se eludió ese bloqueo ni se declara verificada visualmente la nueva pantalla. Se solicita al usuario recargar y confirmar el flujo visible con el servidor restablecido.
+
+Confirmación personal recibida el 01/11/2026: el usuario indicó que la visita ya se guarda correctamente tras recargar. Confirma el flujo de creación de la versión corregida; no se extiende a los demás escenarios manuales.

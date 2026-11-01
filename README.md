@@ -43,7 +43,7 @@ Preparado para macOS o Linux. Prerrequisitos: Node.js **22.12+, 24 o 26** en una
    npm run dev
    ```
 
-Abre **http://127.0.0.1:3000**. La agenda muestra inicialmente el día actual en Madrid; pulsa Limpiar para consultar todas las fechas. La semilla crea catálogos, no reservas: las visitas se crean desde el formulario. Volver a ejecutar la semilla no duplica catálogos ni borra visitas.
+Abre **http://127.0.0.1:3000**. **Mantén la terminal y el servidor en marcha mientras usas la aplicación.** Si detienes el proceso o cierras la terminal, una pestaña ya abierta puede seguir mostrando datos, pero no podrá consultar ni guardar. Vuelve a ejecutar `npm run dev` y recarga la página. La agenda muestra inicialmente el día actual en Madrid; pulsa Limpiar para consultar todas las fechas. La semilla crea catálogos, no reservas: las visitas se crean desde el formulario. Volver a ejecutar la semilla no duplica catálogos ni borra visitas.
 
 El modo de desarrollo usa Webpack y sondeo de archivos para funcionar también en entornos macOS donde FSEvent está restringido. La compilación de producción usa el comando estándar de Next.js.
 
@@ -78,6 +78,7 @@ Next.js + React + TypeScript, Tailwind/CSS, Zod, Drizzle, PostgreSQL y Vitest. L
 ```text
 src/app/          Página y endpoints HTTP
 src/components/   Interfaz interactiva
+src/client/       Peticiones y mensajes de conexión
 src/domain/       Entradas, fechas y reglas de planificación
 src/server/       Servicio transaccional y respuestas HTTP
 src/db/           Esquema, conexión y semilla
