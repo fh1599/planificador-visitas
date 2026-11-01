@@ -3,6 +3,7 @@ import { Planner } from "@/components/planner";
 import { getDatabase } from "@/db/connection";
 import { localDate } from "@/domain/time";
 import { visitService } from "@/server/visits";
+import { availabilityService } from "@/server/availability";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -10,8 +11,8 @@ export const runtime = "nodejs";
 async function loadAgenda(today: string) {
   try {
     const service = visitService(getDatabase());
-    const [catalogs, visits] = await Promise.all([service.catalogs(), service.list({ date: today })]);
-    return { catalogs, visits };
+    const [catalogs, visits, blocks] = await Promise.all([service.catalogs(), service.list({ date: today }), availabilityService(getDatabase()).list({ date: today })]);
+    return { catalogs, visits, blocks };
   } catch {
     return null;
   }
@@ -28,5 +29,5 @@ export default async function Home() {
       <form action="/" method="get"><button className="button primary" type="submit"><RefreshCw size={16} aria-hidden="true" /> Volver a cargar</button></form>
     </main>;
   }
-  return <Planner catalogs={data.catalogs} initialVisits={data.visits} today={today} />;
+  return <Planner catalogs={data.catalogs} initialVisits={data.visits} initialBlocks={data.blocks} today={today} />;
 }

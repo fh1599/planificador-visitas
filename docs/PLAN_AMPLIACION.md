@@ -197,3 +197,5 @@ Fase 2 (2.1–2.5): AM-04 implementado y verificado con 90 unitarias, 31 integra
 Fase 3 (3.1–3.5): reprogramación, versión e historial implementados. 91 unitarias, integración completa de 38 casos y posterior grupo ampliado AM-02 de 9 casos correctos (40 disponibles), tipos/lint/build y consultas HTTP correctos. Migración aplicada. Sigue fase 4, búsqueda de huecos.
 
 Fase 4 (4.1–4.5): AM-01 implementado. 96 unitarias + 43 integraciones, tipos/lint/build y POST HTTP real correctos. Se agrupan inicios válidos consecutivos en un hueco para evitar propuestas redundantes; criterio comunicado antes de implementar. Continúa fase 5, agenda visual.
+
+Fase 5: agenda diaria y acceso común a acciones implementados; 101 unitarias, tipos/lint/build y renderizado HTTP correctos. Se conservan 43 integraciones correctas del hito anterior. La aceptación visual/teclado/móvil está pendiente; el diseño incorpora desplazamiento horizontal y acceso adicional a visitas cortas. Continúa fase 6, avisos internos.

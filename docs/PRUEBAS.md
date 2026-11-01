@@ -102,3 +102,7 @@ Fase 0 de ampliación, 01/11/2026: se repitieron 79 unitarias, TypeScript y lint
 ## Ampliación — hito 4, 01/11/2026
 
 96 unitarias y 43 integraciones PostgreSQL correctas. Tipos, lint y build correctos. POST HTTP real de sugerencias devuelve tres opciones sin escribir visitas. Se verifica minuto exacto, extremo de jornada, huecos agrupados, técnico/equipo, bloqueos, canceladas, no disponibilidad y revalidación de una propuesta ocupada entre consulta y reserva. Revisión visual pendiente.
+
+## Ampliación — hito 5, 01/11/2026
+
+101 unitarias correctas (9 archivos); tipos/lint/build correctos. Agenda: coordenadas 08:00/17:00/un minuto, filtros, canceladas, bloqueos, tramo real de viaje y fechas estacionales. Renderizado SSR comprueba etiquetas y texto HTML escapado; HTTP de página compilada devuelve cuatro columnas y ambas vistas. Integración más reciente: 43 correctas (fase 4, sin cambios nuevos en reglas/escrituras). No se declara realizada la inspección visual ni la interacción con teclado/móvil.

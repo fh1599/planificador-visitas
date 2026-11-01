@@ -37,3 +37,5 @@ AM-04 implementado: availability.ts, servicio transaccional, rutas /api/blocks y
 AM-02 implementado: rescheduleInputSchema, PUT, servicio con versión y bloqueo ordenado, snapshot/historial y formulario de detalle. Evidencia AM-02 de integración, entrada unitaria y HTTP de consulta. Revisión visual pendiente.
 
 AM-01/OP-02 implementados: suggestSlots, consulta de solo lectura, /api/suggestions y panel que aplica al formulario sin reservar. Evidencia: suggestions.test.ts y AM-01 de integración; revalidación de propuesta obsoleta verificada.
+
+AM-03 implementado: agenda.ts, DayAgenda, cambio de vista y navegación diaria, acciones comunes en detalle. Evidencia: agenda.test.ts, renderizado SSR y HTTP. La aceptación visual, móvil y teclado continúa pendiente.

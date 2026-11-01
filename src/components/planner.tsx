@@ -11,11 +11,16 @@ import { VisitDetail } from "./visit-detail";
 import { BlockManager } from "./block-manager";
 import { SlotSearch } from "./slot-search";
 import type { Slot } from "@/domain/suggestions";
+import type { BlockRow } from "@/server/availability";
+import { DayAgenda } from "./day-agenda";
+import { shiftDate } from "@/domain/agenda";
 
 type Filters = { date: string; technicianId: string };
 type Notice = { text: string; tone: "success" | "error" } | null;
 
-export function Planner({ catalogs: initialCatalogs, initialVisits, today }: { catalogs: Catalogs; initialVisits: VisitRow[]; today: string }) {
+export function Planner({ catalogs: initialCatalogs, initialVisits, initialBlocks, today }: { catalogs: Catalogs; initialVisits: VisitRow[]; initialBlocks: BlockRow[]; today: string }) {
+  const [blocks, setBlocks] = useState(initialBlocks);
+  const [view, setView] = useState<"day" | "list">("day");
   const [catalogs, setCatalogs] = useState(initialCatalogs);
   const [manageCatalogs, setManageCatalogs] = useState(false);
   const [manageBlocks, setManageBlocks] = useState(false);
@@ -54,8 +59,9 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, today }: { c
     const params = new URLSearchParams();
     if (nextFilters.date) params.set("date", nextFilters.date);
     if (nextFilters.technicianId) params.set("technicianId", nextFilters.technicianId);
-    const data = await api<{ visits: VisitRow[] }>(`/api/visits?${params}`);
+    const [data, availability] = await Promise.all([api<{ visits: VisitRow[] }>(`/api/visits?${params}`), api<{ blocks: BlockRow[] }>(`/api/blocks?${params}`)]);
     setVisits(data.visits);
+    setBlocks(availability.blocks);
     setApplied(nextFilters);
   }
 
@@ -113,6 +119,11 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, today }: { c
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
+  function moveDay(days: number) {
+    const next = { ...applied, date: days ? shiftDate(applied.date || today, days) : today };
+    setFilters(next); void applyFilters(undefined, next);
+  }
+
   return <>
     <header className="topbar">
       <div className="topbar-inner">
@@ -146,7 +157,8 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, today }: { c
           <div className="agenda-heading"><div><p className="eyebrow">TU AGENDA</p><h2 id="agenda-title">{headingDate}</h2></div><button className="icon-button" type="button" aria-label="Actualizar agenda" disabled={busy} onClick={() => void applyFilters(undefined, applied)}><RefreshCw size={18} className={loading ? "spin" : ""} /></button></div>
           <div className="agenda-counts"><span><i className="legend-dot active" />{activeCount} {activeCount === 1 ? "programada" : "programadas"}</span><span><i className="legend-dot cancelled" />{cancelledCount} {cancelledCount === 1 ? "cancelada" : "canceladas"}</span>{applied.technicianId && <span className="filtered-label">{catalogs.technicians.find((t) => String(t.id) === applied.technicianId)?.name}</span>}</div>
 
-          <div className="visits-panel panel" aria-busy={loading}>
+          <div className="agenda-toolbar"><div className="segmented" aria-label="Vista de la agenda"><button type="button" aria-pressed={view === "day" && !!applied.date} disabled={!applied.date} title={!applied.date ? "Selecciona una fecha para ver el día" : "Ver agenda diaria"} onClick={() => setView("day")}>Agenda diaria</button><button type="button" aria-pressed={view === "list" || !applied.date} onClick={() => setView("list")}>Listado</button></div><div className="date-navigation"><button className="icon-button" aria-label="Día anterior" disabled={busy} type="button" onClick={() => moveDay(-1)}>‹</button><button className="button secondary" type="button" disabled={busy} onClick={() => moveDay(0)}>Hoy</button><button className="icon-button" aria-label="Día siguiente" disabled={busy} type="button" onClick={() => moveDay(1)}>›</button></div></div>
+          {view === "day" && applied.date ? <div aria-busy={loading}><DayAgenda date={applied.date} technicianId={applied.technicianId} catalogs={catalogs} visits={visits} blocks={blocks} onDetail={setDetailId} /></div> : <div className="visits-panel panel" aria-busy={loading}>
             {visits.length ? <div className="table-scroll"><table><caption className="sr-only">Visitas ordenadas por fecha y hora</caption><thead><tr><th>Fecha / hora</th><th>Técnico</th><th>Obra</th><th>Estado</th><th><span className="sr-only">Acciones</span></th></tr></thead><tbody>{visits.map((visit) => <tr key={visit.id} className={visit.status === "Cancelada" ? "cancelled-row" : ""}>
               <td><span className="visit-time">{formatMinute(visit.startMinute)}<span>–</span>{formatMinute(visit.startMinute + visit.duration)}</span><small>{displayDate(visit.date)} <span className="date-dot">·</span> {visit.duration} min</small></td>
               <td><div className="person"><span className={`avatar avatar-${visit.technicianId % 4}`} aria-hidden="true">{visit.technicianName.split(" ").map((part) => part[0]).slice(0, 2).join("")}</span><span>{visit.technicianName}</span></div></td>
@@ -155,7 +167,7 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, today }: { c
               <td>{visit.status === "Programada" ? <button className="cancel-link" type="button" disabled={busy} aria-label={`Cancelar visita de ${visit.technicianName} el ${displayDate(visit.date)} a las ${formatMinute(visit.startMinute)}`} onClick={() => { setCancelError(""); setCancelTarget(visit); }}>Cancelar</button> : <span className="no-action" aria-label="Visita cancelada">—</span>}</td>
             </tr>)}</tbody></table></div> : <div className="empty-state"><span className="empty-icon"><CalendarDays size={28} strokeWidth={1.5} aria-hidden="true" /></span><h3>La agenda está despejada</h3><p>No hay visitas para esta selección.<br />Programa una nueva o cambia los filtros.</p><button className="text-button" type="button" onClick={() => { formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); formRef.current?.querySelector<HTMLSelectElement>("select")?.focus({ preventScroll: true }); }}>Programar una visita <ArrowRight size={15} aria-hidden="true" /></button></div>}
             <div className="table-footer"><span>{visits.length} {visits.length === 1 ? "visita en esta consulta" : "visitas en esta consulta"}</span><span>Ordenadas por fecha y hora</span></div>
-          </div>
+          </div>}
           <p className="agenda-footnote"><Info size={14} aria-hidden="true" />Las visitas canceladas se conservan en el historial y dejan libre el horario.</p>
         </section>
 
@@ -184,7 +196,7 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, today }: { c
     {searchOpen && <SlotSearch catalogs={catalogs} initial={{ ...draft, startTime, duration }} onApply={useSlot} onClose={() => setSearchOpen(false)} />}
     {manageCatalogs && <CatalogManager catalogs={catalogs} onChange={setCatalogs} onClose={() => setManageCatalogs(false)} />}
     {manageBlocks && <BlockManager catalogs={catalogs} today={today} onChange={() => loadVisits(applied)} onClose={() => setManageBlocks(false)} />}
-    {detailId !== null && <VisitDetail key={detailId} id={detailId} catalogs={catalogs} onChange={() => loadVisits(applied)} onClose={() => setDetailId(null)} />}
+    {detailId !== null && <VisitDetail key={detailId} id={detailId} catalogs={catalogs} onChange={() => loadVisits(applied)} onCancel={(visit) => { setDetailId(null); setCancelError(""); setCancelTarget(visit); }} onClose={() => setDetailId(null)} />}
 
     <dialog ref={dialog} className="cancel-dialog" onCancel={(event) => { if (cancelling) event.preventDefault(); else setCancelTarget(null); }} onClose={() => setCancelTarget(null)} aria-labelledby="cancel-title">
       <div className="dialog-icon"><CalendarDays size={24} aria-hidden="true" /></div><h2 id="cancel-title">¿Cancelar esta visita?</h2>
