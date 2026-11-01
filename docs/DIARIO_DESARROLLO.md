@@ -71,3 +71,9 @@ Se aisló la función de petición del cliente, conservando inicialmente su comp
 Por HTTP contra Next y la base principal se creó una visita ficticia propia, se consultó su persistencia, se rechazó el solapamiento y se canceló conservando el registro. No se modificaron visitas del usuario. Se actualizan instrucciones de arranque, pruebas, estado y entregables. La ejecución local se restablece para la validación en curso; no se presenta como un despliegue permanente.
 
 La compilación de producción terminó correctamente. El usuario recargó y confirmó que la visita ya se guarda. Se registra únicamente esa comprobación personal, manteniendo pendiente el resto del guion. La ejecución local queda activa para continuar la validación; no sustituye mantener el servidor en marcha en usos posteriores.
+
+## 01/11/2026 — Alcance de ampliación y planificación
+
+El usuario seleccionó ocho mejoras y cerró la incorporación de nuevas funciones: búsqueda, reprogramación, agenda visual, bloqueos, fichas de obra, seguimiento opcional, tipos sin sobrecargar el formulario y avisos. Confirmó que los avisos serán dentro de la aplicación. Se inspeccionó el estado del repositorio (f486047, limpio) y se preparó PLAN_AMPLIACION.md con fases/subfases, decisiones propuestas, aceptación y pruebas cruzadas. No se alteraron funcionalidades, datos ni servicios al preparar el plan. La batería de base registrada no se presenta como una nueva ejecución.
+
+Se ejecutó la fase 0.3: 79 unitarias, tipos y lint correctos. La primera integración quedó sin ejecutar por resolución de red restringida; se renovó el permiso del turno y la repetición pasó las 21 pruebas. Se deja una referencia comprobada para la ampliación. El siguiente bloque comienza por el diseño de interacción y los casos de migración; aún no hay cambios funcionales.

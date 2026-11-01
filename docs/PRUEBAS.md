@@ -80,3 +80,9 @@ Además, el 01/11/2026 se llamó al servidor Next real por HTTP con el origen lo
 Límite de esta ejecución: la herramienta de navegador rechazó acceder a la pestaña por su política de acceso. No se eludió ese bloqueo ni se declara verificada visualmente la nueva pantalla. Se solicita al usuario recargar y confirmar el flujo visible con el servidor restablecido.
 
 Confirmación personal recibida el 01/11/2026: el usuario indicó que la visita ya se guarda correctamente tras recargar. Confirma el flujo de creación de la versión corregida; no se extiende a los demás escenarios manuales.
+
+## Diseño de pruebas de ampliación
+
+Los casos de AM-01–08 y las interacciones con el núcleo se definen antes de implementarlos en PLAN_AMPLIACION.md, fases 0–8 y matriz de interacciones. Son pruebas previstas; no se cuentan como ejecutadas. La confirmación del usuario se registrará por escenario.
+
+Fase 0 de ampliación, 01/11/2026: se repitieron 79 unitarias, TypeScript y lint, todos correctos. Integración falló al preparar la suite por conexión sin permiso de red (21 casos no ejecutados). Tras restablecer el permiso, las 21 pruebas de integración pasaron en 19,86 s. La base de la aplicación no se modificó.

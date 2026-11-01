@@ -9,7 +9,7 @@ Actualizado: 01/11/2026. **Núcleo implementado y verificado automáticamente; c
 | 3: reglas y servidor | 79 pruebas unitarias y 21 de integración superadas; escrituras serializadas por técnico. |
 | 4: interfaz | Creación, consulta, filtros y cancelación comprobados por el agente en navegador de escritorio. Revisión visual móvil pendiente. |
 | 5: calidad | Tipos, lint y build correctos; creación confirmada por el usuario. Resto de validación personal pendiente. |
-| 6: horarios alternativos | Opcional, no iniciado; requiere decisión posterior. |
+| 6: ampliación seleccionada | Ocho funciones elegidas; plan y pruebas de diseño en PLAN_AMPLIACION.md. Avisos internos confirmados. Implementación pendiente. |
 | 7: entrega | Documentación preparada y ensayo de arranque de 18,66 s. GitHub público pendiente. |
 
 ## Recuperar el trabajo
@@ -23,7 +23,7 @@ Actualizado: 01/11/2026. **Núcleo implementado y verificado automáticamente; c
 
 ## Siguiente acción
 
-Realizar MAN-01–06 con el usuario, registrar su respuesta y corregir lo necesario. Después, presentar el contenido y obtener la aprobación de publicación del repositorio público. Despliegue y sugerencias se decidirán por separado. No enviar nada a Talent Clau sin instrucción expresa.
+Seguir PLAN_AMPLIACION.md: comprobar la base, diseñar las interacciones e implementar las ocho funciones por fases. La validación personal pendiente se integrará en los hitos. Publicar GitHub y desplegar mantienen sus decisiones posteriores; no enviar nada a Talent Clau sin instrucción expresa.
 
 Las comprobaciones del agente no sustituyen la validación personal. Condiciones y límites de las evidencias en PRUEBAS.md.
 
@@ -32,3 +32,9 @@ Las comprobaciones del agente no sustituyen la validación personal. Condiciones
 El usuario encontró `Failed to fetch` con una pestaña abierta y el servidor detenido. Se restableció el servidor y se corrigieron los mensajes de errores de red/respuesta ilegible. REG-002 añade ocho pruebas. El flujo de creación/persistencia/rechazo/cancelación se repitió por HTTP real. La herramienta de navegador bloqueó el acceso en esta sesión; no se declara repetida la validación visual. Mantener el servidor activo durante la comprobación del usuario y explicar que la versión local depende de ese proceso.
 
 El usuario respondió «Ahora se guarda correctamente» tras recargar la versión corregida. Se considera confirmada la creación, no todo el guion MAN-01–06 ni la persistencia tras una segunda recarga.
+
+## Ampliación acordada el 01/11/2026
+
+El usuario seleccionó búsqueda de huecos, reprogramación, agenda visual, bloqueos, fichas de obra, seguimiento opcional, tipos sin complicar el formulario y avisos dentro de la aplicación. Solicitó fases/subfases y pruebas de diseño/regresión antes de implementar. PLAN_AMPLIACION.md concreta el alcance; notas no obligatorias y formulario sencillo son criterios de aceptación. El plan inicial se conserva como referencia histórica.
+
+Preparación de ampliación (0.1–0.3) completada: plan documentado y base comprobada de nuevo (79 unitarias + 21 integración; tipos y lint correctos). Siguiente bloque: 1.1, diseño de interacción, y 0.4/1.2, casos y diseño de migraciones.

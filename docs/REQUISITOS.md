@@ -20,8 +20,12 @@ Auditoría del 01/11/2026. IDs del plan aprobado, no numeración original del PD
 | EN-03 | Explicación de una página | Resumen técnico y PDF | ENT-04 | Cumplido; PDF de una página revisado |
 | EN-04 | Uso de IA y corrección real | Diario, resumen y REG-001 | Fallo reproducido, corregido y verificado | Cumplido |
 | OP-01 | Despliegue opcional | No iniciado | Decisión posterior | Pendiente, opcional |
-| OP-02 | Sugerir horarios | No iniciado | Fuera del núcleo | Pendiente, opcional |
+| OP-02 | Sugerir horarios | Planificado como AM-01 | Alcance adicional seleccionado | Pendiente de implementar |
 
 Tipos, lint y build correctos. Auditoría npm sin vulnerabilidades conocidas al comprobarla; no equivale a una auditoría completa de seguridad. Demostración con datos ficticios y sin autenticación.
 
 REG-002 añade comprobaciones de conexión y respuestas ilegibles del cliente. Servidor local restablecido tras el fallo comunicado; creación confirmada por el usuario tras recargar. Resto de validación manual pendiente.
+
+## Ampliación seleccionada
+
+AM-01–08, criterios de aceptación, dependencias y pruebas previstas en [PLAN_AMPLIACION.md](PLAN_AMPLIACION.md). Estado de todos ellos: planificados, implementación y verificación pendientes. Se mantienen las obligaciones del núcleo RF/RT/EN.

@@ -1,5 +1,7 @@
 # Planificador de visitas — propuesta de trabajo
 
+**Actualización 01/11/2026:** la ampliación seleccionada por el usuario y su secuencia vigente se describen en [PLAN_AMPLIACION.md](PLAN_AMPLIACION.md). Este archivo conserva el plan inicial.
+
 Fecha: 30/10/2026. Estado: aprobado por el usuario. Plazo comunicado por el usuario: **dos días restantes**; hora límite sin confirmar.
 
 Aprobados el núcleo, arquitectura, carpeta, supuestos y Neon Free. La publicación en GitHub, el despliegue y la mejora opcional mantienen sus puntos de aprobación posteriores. Las secciones siguientes conservan el plan original como referencia; el estado vigente se registra en ESTADO_PROYECTO.md y PRUEBAS.md.
