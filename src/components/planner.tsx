@@ -38,6 +38,7 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, initialBlock
   const [cancelling, setCancelling] = useState(false);
   const [notice, setNotice] = useState<Notice>(null);
   const [formError, setFormError] = useState("");
+  const [formFeedback, setFormFeedback] = useState<Notice>(null);
   const [cancelError, setCancelError] = useState("");
   const [cancelTarget, setCancelTarget] = useState<VisitRow | null>(null);
   const [startTime, setStartTime] = useState("09:00");
@@ -83,17 +84,18 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, initialBlock
     const input = { technicianId: Number(form.get("technicianId")), siteId: Number(form.get("siteId")), date: String(form.get("date")), startTime: String(form.get("startTime")), duration: Number(form.get("duration")), ...(typeId ? { typeId: Number(typeId) } : {}) };
     setSaving(true);
     setFormError("");
+    setFormFeedback(null);
     setNotice(null);
     let saved = false;
     try {
       await api("/api/visits", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(input) });
       saved = true;
+      setFormFeedback({ text: `Visita guardada para el ${displayDate(input.date)} a las ${input.startTime}.`, tone: "success" });
       const next = { date: input.date, technicianId: "" };
       await loadVisits(next);
       setFilters(next);
-      setNotice({ text: `Visita programada para el ${displayDate(input.date)} a las ${input.startTime}.`, tone: "success" });
     } catch (error) {
-      if (saved) setNotice({ text: "La visita se ha guardado, pero no se pudo actualizar el listado. Pulsa Actualizar antes de repetir la operación.", tone: "error" });
+      if (saved) setFormFeedback({ text: "La visita se ha guardado, pero no se pudo actualizar la agenda. Pulsa Actualizar antes de repetir la operación.", tone: "error" });
       else setFormError(error instanceof Error ? error.message : "No se pudo guardar la visita. Inténtalo de nuevo.");
     } finally { setSaving(false); }
   }
@@ -118,7 +120,7 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, initialBlock
   function useSlot(slot: Slot) {
     setDraft({ siteId: String(slot.siteId), technicianId: String(slot.technicianId), date: slot.date });
     setStartTime(formatMinute(slot.startMinute)); setDuration(String(slot.duration)); setSearchOpen(false); setFormError("");
-    setNotice({ text: "Horario aplicado al formulario. Revisa los datos y pulsa Programar visita para confirmar.", tone: "success" });
+    setFormFeedback({ text: "Horario aplicado. Revisa los datos y pulsa Programar visita para confirmar.", tone: "success" });
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
@@ -168,7 +170,7 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, initialBlock
               <td><button type="button" className="site-name site-detail-link" onClick={() => setDetailId(visit.id)} aria-label={`Ver detalle de la visita a ${visit.siteName}`}>{visit.siteName}</button><small className="municipality"><MapPin size={11} aria-hidden="true" />{visit.municipality}</small>{visit.typeName && <small>{visit.typeName}</small>}</td>
               <td><span className={`badge ${visit.status === "Programada" ? "scheduled" : "cancelled"}`}><span />{visit.status}</span></td>
               <td>{visit.status === "Programada" ? <button className="cancel-link" type="button" disabled={busy} aria-label={`Cancelar visita de ${visit.technicianName} el ${displayDate(visit.date)} a las ${formatMinute(visit.startMinute)}`} onClick={() => { setCancelError(""); setCancelTarget(visit); }}>Cancelar</button> : <span className="no-action" aria-label="Visita cancelada">—</span>}</td>
-            </tr>)}</tbody></table></div> : <div className="empty-state"><span className="empty-icon"><CalendarDays size={28} strokeWidth={1.5} aria-hidden="true" /></span><h3>La agenda está despejada</h3><p>No hay visitas para esta selección.<br />Programa una nueva o cambia los filtros.</p><button className="text-button" type="button" onClick={() => { formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); formRef.current?.querySelector<HTMLSelectElement>("select")?.focus({ preventScroll: true }); }}>Programar una visita <ArrowRight size={15} aria-hidden="true" /></button></div>}
+            </tr>)}</tbody></table></div> : <div className="empty-state"><span className="empty-icon"><CalendarDays size={28} strokeWidth={1.5} aria-hidden="true" /></span><h3>La agenda está despejada</h3><p>No hay visitas para esta selección.<br />Programa una nueva o cambia los filtros.</p><button className="text-button" type="button" onClick={() => { formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); formRef.current?.querySelector<HTMLSelectElement>("#new-site")?.focus({ preventScroll: true }); }}>Programar una visita <ArrowRight size={15} aria-hidden="true" /></button></div>}
             <div className="table-footer"><span>{visits.length} {visits.length === 1 ? "visita en esta consulta" : "visitas en esta consulta"}</span><span>Ordenadas por fecha y hora</span></div>
           </div>}
           <p className="agenda-footnote"><Info size={14} aria-hidden="true" />Las visitas canceladas se conservan en el historial y dejan libre el horario.</p>
@@ -185,6 +187,7 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, initialBlock
                 <div className="time-fields"><label htmlFor="new-time">Hora de inicio<input type="time" id="new-time" name="startTime" required min="08:00" max="16:59" step="60" value={startTime} onChange={(e) => setStartTime(e.target.value)} /></label><label htmlFor="new-duration">Duración <span className="label-unit">(min)</span><input type="number" id="new-duration" name="duration" required min="1" max="540" step="1" value={duration} onChange={(e) => setDuration(e.target.value)} /></label></div>
                 <div className="end-preview"><Clock3 size={15} aria-hidden="true" /><span>Finalización prevista</span><strong>{validEnd ? formatMinute(endMinute) : "—"}</strong></div>
                 {formError && <div className="form-error" role="alert"><strong>No se ha podido confirmar la visita</strong><p>{formError}</p></div>}
+                {formFeedback && <p className={`notice ${formFeedback.tone} form-feedback`} role={formFeedback.tone === "error" ? "alert" : "status"}>{formFeedback.text}</p>}
                 <button className="text-button search-slots-button" type="button" onClick={() => setSearchOpen(true)}>Buscar un horario libre</button>
                 <button className="button primary create-submit" type="submit"><Plus size={17} aria-hidden="true" />{saving ? "Comprobando y guardando…" : "Programar visita"}</button>
               </fieldset>
