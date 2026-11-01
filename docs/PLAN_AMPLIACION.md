@@ -199,3 +199,5 @@ Fase 3 (3.1–3.5): reprogramación, versión e historial implementados. 91 unit
 Fase 4 (4.1–4.5): AM-01 implementado. 96 unitarias + 43 integraciones, tipos/lint/build y POST HTTP real correctos. Se agrupan inicios válidos consecutivos en un hueco para evitar propuestas redundantes; criterio comunicado antes de implementar. Continúa fase 5, agenda visual.
 
 Fase 5: agenda diaria y acceso común a acciones implementados; 101 unitarias, tipos/lint/build y renderizado HTTP correctos. Se conservan 43 integraciones correctas del hito anterior. La aceptación visual/teclado/móvil está pendiente; el diseño incorpora desplazamiento horizontal y acceso adicional a visitas cortas. Continúa fase 6, avisos internos.
+
+Fase 6 (6.1–6.5): AM-08 implementado. 107 unitarias + 47 integraciones, tipos/lint/build y API de avisos correctos. Lectura por navegador, actividad compartida de visitas/bloqueos y recordatorios de 30 minutos con actualización visible. El usuario confirmó apariencia de agenda y apertura del detalle. Restan acabado/accesibilidad y cierre de verificación/entrega; móvil/teclado y otras acciones personales aún pendientes.

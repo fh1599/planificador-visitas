@@ -14,6 +14,7 @@ import type { Slot } from "@/domain/suggestions";
 import type { BlockRow } from "@/server/availability";
 import { DayAgenda } from "./day-agenda";
 import { shiftDate } from "@/domain/agenda";
+import { Notifications } from "./notifications";
 
 type Filters = { date: string; technicianId: string };
 type Notice = { text: string; tone: "success" | "error" } | null;
@@ -21,6 +22,7 @@ type Notice = { text: string; tone: "success" | "error" } | null;
 export function Planner({ catalogs: initialCatalogs, initialVisits, initialBlocks, today }: { catalogs: Catalogs; initialVisits: VisitRow[]; initialBlocks: BlockRow[]; today: string }) {
   const [blocks, setBlocks] = useState(initialBlocks);
   const [view, setView] = useState<"day" | "list">("day");
+  const [notificationRevision, setNotificationRevision] = useState(0);
   const [catalogs, setCatalogs] = useState(initialCatalogs);
   const [manageCatalogs, setManageCatalogs] = useState(false);
   const [manageBlocks, setManageBlocks] = useState(false);
@@ -63,6 +65,7 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, initialBlock
     setVisits(data.visits);
     setBlocks(availability.blocks);
     setApplied(nextFilters);
+    setNotificationRevision((n) => n + 1);
   }
 
   async function applyFilters(event?: FormEvent, next = filters) {
@@ -134,7 +137,7 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, initialBlock
     </header>
 
     <main className="workspace">
-      <div className="workspace-tools"><button type="button" className="button secondary" disabled={busy} onClick={() => setManageBlocks(true)}>Disponibilidad</button><button type="button" className="button secondary" disabled={busy} onClick={() => setManageCatalogs(true)}>Obras y tipos</button></div>
+      <div className="workspace-tools"><Notifications revision={notificationRevision} onVisit={setDetailId} onBlocks={() => setManageBlocks(true)} /><button type="button" className="button secondary" disabled={busy} onClick={() => setManageBlocks(true)}>Disponibilidad</button><button type="button" className="button secondary" disabled={busy} onClick={() => setManageCatalogs(true)}>Obras y tipos</button></div>
       <div className="page-heading">
         <div><p className="eyebrow">PLANIFICACIÓN DEL EQUIPO</p><h1>Agenda de visitas<span className="heading-dot">.</span></h1><p className="page-description">Cada obra a su hora. Organiza las visitas y evita conflictos.</p></div>
         <div className="team-indicator"><span className="team-icon"><Users size={20} aria-hidden="true" /></span><span><strong>{catalogs.technicians.length} técnicos</strong><small>{catalogs.sites.length} obras en el catálogo</small></span></div>

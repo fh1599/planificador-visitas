@@ -56,7 +56,7 @@ export const visitEvents = pgTable("visit_events", {
   kind: visitEventKind().notNull(),
   before: jsonb().$type<VisitSnapshot>(),
   after: jsonb().$type<VisitSnapshot>().notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().default(sql`clock_timestamp()`),
 }, (table) => [index("visit_events_visit_idx").on(table.visitId, table.createdAt), index("visit_events_recent_idx").on(table.createdAt)]);
 
 export const annotationKind = pgEnum("annotation_kind", ["Nota", "Incidencia", "Resultado"]);
@@ -86,3 +86,11 @@ export const annotations = pgTable("annotations", {
   index("annotations_visit_idx").on(table.visitId, table.createdAt),
   check("annotation_not_empty", sql`length(trim(${table.body})) > 0`),
 ]);
+
+export const blockEventKind = pgEnum("block_event_kind", ["Bloqueada", "Liberada"]);
+export const blockEvents = pgTable("block_events", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  blockId: integer("block_id").notNull().references(() => availabilityBlocks.id, { onDelete: "cascade" }),
+  kind: blockEventKind().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().default(sql`clock_timestamp()`),
+}, (table) => [index("block_events_recent_idx").on(table.createdAt)]);

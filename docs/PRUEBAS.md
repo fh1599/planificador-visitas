@@ -106,3 +106,9 @@ Fase 0 de ampliación, 01/11/2026: se repitieron 79 unitarias, TypeScript y lint
 ## Ampliación — hito 5, 01/11/2026
 
 101 unitarias correctas (9 archivos); tipos/lint/build correctos. Agenda: coordenadas 08:00/17:00/un minuto, filtros, canceladas, bloqueos, tramo real de viaje y fechas estacionales. Renderizado SSR comprueba etiquetas y texto HTML escapado; HTTP de página compilada devuelve cuatro columnas y ambas vistas. Integración más reciente: 43 correctas (fase 4, sin cambios nuevos en reglas/escrituras). No se declara realizada la inspección visual ni la interacción con teclado/móvil.
+
+## Ampliación — hito 6, 01/11/2026
+
+107 unitarias + 47 integraciones completas correctas; tipos/lint/build correctos. Avisos: ventana exacta con milisegundos, Madrid invierno/verano/cambios estacionales, cancelación/reprogramación/cambio de técnico, lectura corrupta y repetida, límite de almacenamiento, apertura/foco/visibilidad/intervalo, caída y recuperación, no duplicar consultas en vuelo y limpieza al desmontar. Persistencia: eventos solo de cambios confirmados, retirada de bloqueo idempotente, filtro de actividad antigua y respuesta sin caché con hora del servidor. Flujo combinado tipo → propuesta → reserva → incidencia → reprogramación → aviso → cancelación, con referencias y notas conservadas. Migración 0004 aplicada y API compilada de avisos responde HTTP 200.
+
+Validación personal: el usuario confirmó que la agenda diaria se ve bien y al pulsar una visita abre el detalle. Esta confirmación no se extiende a móvil, teclado ni al resto de escrituras ampliadas.

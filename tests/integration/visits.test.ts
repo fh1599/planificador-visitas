@@ -20,6 +20,9 @@ import { availabilityBlocks } from "../../src/db/schema";
 import { POST as createBlock, GET as listBlocks } from "../../src/app/api/blocks/route";
 import { PATCH as removeBlock } from "../../src/app/api/blocks/[id]/route";
 import { POST as searchSlots } from "../../src/app/api/suggestions/route";
+import { notificationFeed } from "../../src/server/notifications";
+import { GET as getNotifications } from "../../src/app/api/notifications/route";
+import { visitEvents, blockEvents } from "../../src/db/schema";
 
 config({ path: ".env.local", quiet: true });
 const testUrl = process.env.TEST_DATABASE_URL;
@@ -389,5 +392,61 @@ describe("AM-01 · Buscar y confirmar", () => {
     expect((await searchSlots(request({ ...input, duration: 0 }))).status).toBe(400);
     expect((await searchSlots(request({ ...input, siteId: 2147483647 }))).status).toBe(404);
     expect((await searchSlots(request({ ...input, technicianId: 2147483647 }))).status).toBe(404);
+  });
+});
+
+describe("AM-08 · Avisos persistentes y flujo combinado", () => {
+  const now = new Date("2026-11-02T07:45:00Z");
+  async function alignEvents() {
+    await first.db.update(visitEvents).set({ createdAt: new Date("2026-11-02T07:00:00Z") });
+    await first.db.update(blockEvents).set({ createdAt: new Date("2026-11-02T07:00:00Z") });
+  }
+  it("invalida recordatorios tras mover o cancelar, conservando la actividad", async () => {
+    const visit = await service.create(input); await alignEvents();
+    expect((await notificationFeed(first.db, now)).reminders[0].key).toBe(`reminder:${visit.id}:1`);
+    await service.reschedule(visit.id, { ...input, startTime: "10:00", version: 1 }); await alignEvents();
+    expect((await notificationFeed(first.db, now)).reminders).toHaveLength(0);
+    await service.cancel(visit.id); await service.cancel(visit.id); await alignEvents();
+    const feed = await notificationFeed(first.db, now);
+    expect(feed.reminders).toHaveLength(0); expect(feed.activity).toHaveLength(3);
+    expect(feed.activity.some((n) => n.title.includes("cancelada"))).toBe(true);
+  });
+  it("no emite éxitos por cambios rechazados y no duplica la retirada de bloques", async () => {
+    const visit = await service.create(input);
+    await expect(service.create(input)).rejects.toThrow();
+    await expect(service.reschedule(visit.id, { ...input, startTime: "07:00", version: 1 })).rejects.toThrow();
+    const blockInput = { technicianId: 1, startDate: input.date, endDate: input.date, startTime: "09:00", endTime: "10:00", reason: "Ausencia" };
+    await expect(availability.create(blockInput)).rejects.toThrow();
+    const block = await availability.create({ ...blockInput, startTime: "14:00", endTime: "15:00" });
+    await availability.remove(block.id); await availability.remove(block.id); await alignEvents();
+    const feed = await notificationFeed(first.db, now);
+    expect(feed.activity).toHaveLength(3);
+    expect(feed.activity.filter((e) => e.blockId === block.id)).toHaveLength(2);
+    expect(new Set(feed.activity.map((e) => e.key)).size).toBe(3);
+  });
+  it("combina tipo, propuesta, reserva, nota, cambio de técnico, aviso y cancelación", async () => {
+    const type = await operations.createType({ name: "Revisión", duration: 45, instructions: "Revisar acceso", active: true });
+    const response = await searchSlots(request({ ...input, duration: 45 }));
+    const { suggestions } = await response.json(); expect(suggestions[0].startMinute).toBe(540);
+    const visit = await service.create({ ...input, duration: 45, typeId: type.id });
+    await operations.annotate(visit.id, { kind: "Incidencia", body: "Confirmar acceso" });
+    await service.reschedule(visit.id, { ...input, technicianId: 2, startTime: "09:05", duration: 45, version: 1 }); await alignEvents();
+    const feed = await notificationFeed(first.db, now);
+    expect(feed.reminders).toHaveLength(1); expect(feed.reminders[0].text).toContain("Laura Soler");
+    expect(feed.reminders[0].key).toBe(`reminder:${visit.id}:2`);
+    await service.cancel(visit.id, 2); await alignEvents();
+    const detail = await operations.detail(visit.id);
+    expect(detail.visit).toMatchObject({ status: "Cancelada", typeName: "Revisión", duration: 45 });
+    expect(detail.annotations[0].body).toBe("Confirmar acceso");
+    expect(detail.history).toHaveLength(3);
+    expect((await notificationFeed(first.db, now)).reminders).toHaveLength(0);
+  });
+  it("limita actividad antigua y responde con hora del servidor sin caché", async () => {
+    await service.create(input);
+    await first.db.update(visitEvents).set({ createdAt: new Date("2026-10-01T08:00:00Z") });
+    expect((await notificationFeed(first.db, now)).activity).toHaveLength(0);
+    const response = await getNotifications();
+    expect(response.status).toBe(200); expect(response.headers.get("cache-control")).toBe("no-store");
+    expect((await response.json()).serverTime).toMatch(/^\d{4}-\d{2}-\d{2}T/);
   });
 });

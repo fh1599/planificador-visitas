@@ -31,7 +31,7 @@ export function operationsService(db: Database) {
         .innerJoin(sites, eq(visits.siteId, sites.id)).innerJoin(technicians, eq(visits.technicianId, technicians.id)).where(eq(visits.id, id));
       if (!row) throw new VisitError("VISIT_NOT_FOUND", "La visita no existe.", 404);
       const entries = await db.select().from(annotations).where(eq(annotations.visitId, id)).orderBy(asc(annotations.createdAt), asc(annotations.id));
-      const events = await db.select().from(visitEvents).where(eq(visitEvents.visitId, id)).orderBy(asc(visitEvents.createdAt), asc(visitEvents.id));
+      const events = await db.select().from(visitEvents).where(eq(visitEvents.visitId, id)).orderBy(asc(visitEvents.id));
       return { ...row, annotations: entries.map((a) => ({ ...a, createdAt: a.createdAt.toISOString() })), history: events.map((e) => ({ ...e, createdAt: e.createdAt.toISOString() })) };
     },
     async annotate(rawId: unknown, input: unknown) {

@@ -1,6 +1,6 @@
 import { and, asc, eq, gte, lte } from "drizzle-orm";
 import type { Database } from "../db/connection";
-import { availabilityBlocks, technicians, visits } from "../db/schema";
+import { availabilityBlocks, blockEvents, technicians, visits } from "../db/schema";
 import { blockInputSchema } from "../domain/availability";
 import { filterSchema, idSchema } from "../domain/input";
 import { checkPlanning } from "../domain/planning";
@@ -30,7 +30,9 @@ export function availabilityService(db: Database) {
           const summary = affected.slice(0, 5).map((v) => `#${v.id} (${displayDate(v.date)}, ${formatMinute(v.startMinute)})`).join(", ");
           throw new VisitError("BLOCK_CONFLICT", `El bloqueo afecta a ${affected.length} visita(s) o a su desplazamiento: ${summary}${affected.length > 5 ? "…" : ""}. Reprograma o cancela esas visitas antes de bloquear.`, 409, { visitIds: affected.map((v) => v.id) });
         }
-        const [saved] = await tx.insert(availabilityBlocks).values(data).returning(); return saved;
+        const [saved] = await tx.insert(availabilityBlocks).values(data).returning();
+        await tx.insert(blockEvents).values({ blockId: saved.id, kind: "Bloqueada" });
+        return saved;
       }, { isolationLevel: "read committed" });
     },
     async remove(rawId: unknown) {
@@ -39,7 +41,11 @@ export function availabilityService(db: Database) {
         const [block] = await tx.select().from(availabilityBlocks).where(eq(availabilityBlocks.id, id));
         if (!block) throw new VisitError("BLOCK_NOT_FOUND", "El bloqueo no existe.", 404);
         await tx.select().from(technicians).where(eq(technicians.id, block.technicianId)).for("update");
-        const [saved] = await tx.update(availabilityBlocks).set({ active: false }).where(eq(availabilityBlocks.id, id)).returning(); return saved;
+        const [current] = await tx.select().from(availabilityBlocks).where(eq(availabilityBlocks.id, id));
+        if (!current.active) return current;
+        const [saved] = await tx.update(availabilityBlocks).set({ active: false }).where(eq(availabilityBlocks.id, id)).returning();
+        await tx.insert(blockEvents).values({ blockId: saved.id, kind: "Liberada" });
+        return saved;
       }, { isolationLevel: "read committed" });
     },
   };

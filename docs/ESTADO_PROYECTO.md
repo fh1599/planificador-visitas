@@ -48,3 +48,5 @@ Avance fase 3: AM-02 implementado. 91 unitarias; 38 integraciones completas y lu
 Avance fase 4: búsqueda de huecos (AM-01) implementada. 96 unitarias + 43 integraciones, tipos/lint/build y HTTP correctos. Próxima fase: agenda visual diaria. Revisión visual/personal pendiente.
 
 Avance fase 5: AM-03 implementado; revisión visual/teclado/móvil pendiente. 101 unitarias y tipos/lint/build correctos; 43 integraciones del hito anterior. Próxima fase: AM-08, avisos internos.
+
+Avance fase 6: las ocho ampliaciones están implementadas. 107 unitarias + 47 integraciones, tipos/lint/build y HTTP de avisos correctos. El usuario confirmó vista de agenda y apertura del detalle. Continuar fases 7–8: revisión final de interacción/accesibilidad, ensayo limpio, documentación y paquete actualizado. Publicación sigue pendiente.

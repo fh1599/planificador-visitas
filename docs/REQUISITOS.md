@@ -39,3 +39,5 @@ AM-02 implementado: rescheduleInputSchema, PUT, servicio con versión y bloqueo 
 AM-01/OP-02 implementados: suggestSlots, consulta de solo lectura, /api/suggestions y panel que aplica al formulario sin reservar. Evidencia: suggestions.test.ts y AM-01 de integración; revalidación de propuesta obsoleta verificada.
 
 AM-03 implementado: agenda.ts, DayAgenda, cambio de vista y navegación diaria, acciones comunes en detalle. Evidencia: agenda.test.ts, renderizado SSR y HTTP. La aceptación visual, móvil y teclado continúa pendiente.
+
+AM-08 implementado: eventos transaccionales, reloj/recordatorios Madrid, /api/notifications, actualización visible y lectura por navegador. Evidencia: notifications.test.ts, notification-poller.test.ts y AM-08 de integración. Las ocho ampliaciones tienen implementación y pruebas; comprobación personal confirmada únicamente para vista de agenda/apertura de detalle, además de creación del núcleo.
