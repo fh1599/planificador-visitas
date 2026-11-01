@@ -42,3 +42,5 @@ Preparación de ampliación (0.1–0.3) completada: plan documentado y base comp
 Avance posterior al plan: fase 1 de ampliación implementada (AM-05/06/07), migración aditiva aplicada y servidor local actualizado. 83 unitarias + 26 integraciones, tipos/lint/build correctos. Inspección visual nueva pendiente. Continuar fase 2 del plan de ampliación; el paquete previo todavía corresponde al núcleo.
 
 Avance fase 2: AM-04 implementado. 90 unitarias + 31 integraciones, tipos/lint/build y HTTP de lectura correctos. Las ausencias no cuentan como viaje; carrera bloqueo/reserva protegida. Continuar fase 3, reprogramación.
+
+Avance fase 3: AM-02 implementado. 91 unitarias; 38 integraciones completas y luego 9 AM-02 al ampliar la suite a 40, todas ejecutadas correctas. Tipos/lint/build y consultas HTTP correctos. Continuar fase 4; revisión visual/personal pendiente.

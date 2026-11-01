@@ -7,7 +7,7 @@ import { seedCatalogs } from "../../src/db/seed";
 import { sites, technicians, visits } from "../../src/db/schema";
 import { visitService } from "../../src/server/visits";
 import { POST, GET } from "../../src/app/api/visits/route";
-import { PATCH } from "../../src/app/api/visits/[id]/route";
+import { PATCH, PUT } from "../../src/app/api/visits/[id]/route";
 import { operationsService } from "../../src/server/operations";
 import { visitTypes } from "../../src/db/schema";
 import { readFileSync, readdirSync } from "node:fs";
@@ -277,5 +277,90 @@ describe("INT-06 · Concurrencia con conexiones independientes", () => {
   it("usa un motor PostgreSQL real", async () => {
     const result = await first.db.execute(sql`select version() as version`);
     expect(result[0].version).toContain("PostgreSQL");
+  });
+});
+
+describe("AM-02 · Reprogramación atómica", () => {
+  it("exige versión por HTTP y rechaza una edición obsoleta sin duplicar", async () => {
+    const visit = await service.create(input); const context = { params: Promise.resolve({ id: String(visit.id) }) };
+    expect((await PUT(request(input), context)).status).toBe(400);
+    expect((await PUT(request({ ...input, startTime: "10:00", version: 1 }), context)).status).toBe(200);
+    expect((await PUT(request({ ...input, startTime: "11:00", version: 1 }), context)).status).toBe(409);
+    expect((await PATCH(request({ status: "Cancelada", version: 1 }), context)).status).toBe(409);
+    expect((await operations.detail(visit.id)).visit).toMatchObject({ startMinute: 600, status: "Programada", version: 2 });
+    expect(await service.list()).toHaveLength(1);
+  });
+  it("resuelve cambios cruzados de técnico sin interbloqueo", async () => {
+    const a = await service.create(input);
+    const b = await service.create({ ...input, technicianId: 2, startTime: "12:00" });
+    await Promise.all([
+      service.reschedule(a.id, { ...input, technicianId: 2, version: 1 }),
+      independentService.reschedule(b.id, { ...input, startTime: "12:00", version: 1 }),
+    ]);
+    expect((await operations.detail(a.id)).visit.technicianId).toBe(2);
+    expect((await operations.detail(b.id)).visit.technicianId).toBe(1);
+  });
+  it("excluye su propio ID, conserva notas y registra solo cambios efectivos", async () => {
+    const visit = await service.create(input);
+    await operations.annotate(visit.id, { kind: "Resultado", body: "Conservar" });
+    expect((await service.reschedule(visit.id, { ...input, version: visit.version })).version).toBe(visit.version);
+    const changed = await service.reschedule(visit.id, { ...input, startTime: "09:30", duration: 30, version: visit.version });
+    expect(changed).toMatchObject({ id: visit.id, startMinute: 570, duration: 30, version: 2 });
+    const detail = await operations.detail(visit.id);
+    expect(detail.annotations[0].body).toBe("Conservar");
+    expect(detail.history.map((event) => event.kind)).toEqual(["Programada", "Reprogramada"]);
+    expect(detail.history[1].before?.startMinute).toBe(540);
+    expect(detail.history[1].after.startMinute).toBe(570);
+  });
+  it("conserva la visita original si el nuevo horario incumple cualquier regla", async () => {
+    const visit = await service.create(input);
+    await service.create({ ...input, startTime: "12:00", siteId: 2 });
+    await availability.create({ technicianId: 1, startDate: input.date, endDate: input.date, startTime: "15:00", endTime: "16:00", reason: "" });
+    for (const changes of [{ startTime: "12:00" }, { startTime: "13:15" }, { startTime: "15:00" }, { startTime: "07:59" }, { startTime: "16:30", duration: 31 }]) {
+      await expect(service.reschedule(visit.id, { ...input, ...changes, version: visit.version })).rejects.toThrow();
+      expect((await operations.detail(visit.id)).visit).toMatchObject({ startMinute: 540, duration: 60, version: 1 });
+    }
+    expect((await operations.detail(visit.id)).history).toHaveLength(1);
+  });
+  it("cambia técnico y día, libera el anterior y acepta exactamente 08:00–17:00", async () => {
+    const visit = await service.create(input);
+    await service.reschedule(visit.id, { ...input, technicianId: 2, date: "2026-11-03", startTime: "08:00", duration: 540, version: visit.version });
+    await service.create(input);
+    await expect(service.create({ ...input, technicianId: 2, date: "2026-11-03" })).rejects.toMatchObject({ code: "OVERLAP" });
+  });
+  it("impide que dos ediciones de la misma versión se sobrescriban", async () => {
+    const visit = await service.create(input);
+    const results = await Promise.allSettled([
+      service.reschedule(visit.id, { ...input, startTime: "10:00", version: visit.version }),
+      independentService.reschedule(visit.id, { ...input, startTime: "11:00", version: visit.version }),
+    ]);
+    expect(results.filter((r) => r.status === "fulfilled")).toHaveLength(1);
+    const rejected = results.find((r) => r.status === "rejected");
+    expect(rejected?.status === "rejected" && rejected.reason.code).toBe("STALE_VISIT");
+    expect((await operations.detail(visit.id)).history).toHaveLength(2);
+  });
+  it("cancelación y edición concurrentes no reactivan ni sobrescriben una visita", async () => {
+    const visit = await service.create(input);
+    const results = await Promise.allSettled([
+      service.cancel(visit.id, visit.version),
+      independentService.reschedule(visit.id, { ...input, startTime: "10:00", version: visit.version }),
+    ]);
+    expect(results.filter((r) => r.status === "fulfilled")).toHaveLength(1);
+    expect((await operations.detail(visit.id)).history).toHaveLength(2);
+  });
+  it("protege el nuevo hueco frente a una reserva simultánea", async () => {
+    const visit = await service.create(input);
+    const results = await Promise.allSettled([
+      service.reschedule(visit.id, { ...input, technicianId: 2, version: visit.version }),
+      independentService.create({ ...input, technicianId: 2 }),
+    ]);
+    expect(results.filter((r) => r.status === "fulfilled")).toHaveLength(1);
+    expect(await service.list({ technicianId: 2 })).toHaveLength(1);
+  });
+  it("cancelar es idempotente y no permite reprogramar después", async () => {
+    const visit = await service.create(input);
+    await service.cancel(visit.id); await service.cancel(visit.id);
+    await expect(service.reschedule(visit.id, { ...input, version: visit.version })).rejects.toMatchObject({ code: "VISIT_CANCELLED" });
+    expect((await operations.detail(visit.id)).history.map((e) => e.kind)).toEqual(["Programada", "Cancelada"]);
   });
 });

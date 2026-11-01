@@ -193,3 +193,5 @@ No basta con aumentar el número de tests. Las pruebas deben detectar comportami
 01/11/2026, fase 1: subfases 0.4 y 1.1–1.6 implementadas; 83 unitarias, 26 integraciones, tipos/lint/build correctos y migración aplicada. AM-05/06/07 disponibles en la versión local. Inspección visual y validación personal pendientes; se mantienen en el cierre transversal. Siguiente bloque: fase 2, bloqueos.
 
 Fase 2 (2.1–2.5): AM-04 implementado y verificado con 90 unitarias, 31 integraciones y tipos/lint/build. Migración aplicada y versión local actualizada. Próximo bloque: reprogramación atómica, control de versión e historial. La validación visual sigue pendiente.
+
+Fase 3 (3.1–3.5): reprogramación, versión e historial implementados. 91 unitarias, integración completa de 38 casos y posterior grupo ampliado AM-02 de 9 casos correctos (40 disponibles), tipos/lint/build y consultas HTTP correctos. Migración aplicada. Sigue fase 4, búsqueda de huecos.

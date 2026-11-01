@@ -94,3 +94,7 @@ Fase 0 de ampliación, 01/11/2026: se repitieron 79 unitarias, TypeScript y lint
 ## Ampliación — hito 2, 01/11/2026
 
 90 unitarias y 31 integraciones correctas, más tipos/lint/build. Incluye bordes, contención y cruce de bloqueos, días/rangos, otro técnico, retirados, viajes de 29/30 minutos y fragmentos discontinuos; API de crear/retirar bloqueo; visitas canceladas; bloqueo que invalida reservas; identificación de visitas afectadas sin incluir otras; carrera bloqueo/reserva con conexiones independientes. Migración 0002 aplicada y página/API de bloqueos responden HTTP 200 en el servidor compilado. Revisión visual sigue pendiente.
+
+## Ampliación — hito 3, 01/11/2026
+
+91 unitarias correctas. Integración completa de 38 casos correcta; tras añadir dos casos, ejecución focalizada AM-02: 9 correctos y 31 omitidos, total de casos disponibles 40. Reprogramación: propio ID, notas, historial, fallo conserva original, nueva fecha/técnico, jornada completa, versiones concurrentes, cancelación concurrente, reserva concurrente, cambios cruzados de técnico, HTTP sin versión/obsoleto y cancelación idempotente. Tipos/lint/build correctos; HTTP de consultas con versión e historial correcto. Revisión visual pendiente.

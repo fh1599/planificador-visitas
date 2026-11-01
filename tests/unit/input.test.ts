@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { visitInputSchema, filterSchema } from "../../src/domain/input";
+import { visitInputSchema, filterSchema, rescheduleInputSchema } from "../../src/domain/input";
 import { formatMinute, localDate } from "../../src/domain/time";
 
 const input = { technicianId: 1, siteId: 1, date: "2026-11-02", startTime: "09:00", duration: 60 };
@@ -40,6 +40,13 @@ describe("UNIT-01 · Datos de entrada", () => {
 });
 
 describe("Fechas y presentación", () => {
+  it("exige una versión válida para reprogramar y conserva los datos opcionales fuera del cambio", () => {
+    expect(rescheduleInputSchema.safeParse(input).success).toBe(false);
+    expect(rescheduleInputSchema.safeParse({ ...input, version: 0 }).success).toBe(false);
+    expect(rescheduleInputSchema.safeParse({ ...input, version: 1, status: "Cancelada" }).success).toBe(false);
+    expect(rescheduleInputSchema.safeParse({ ...input, version: 1, typeId: 1 }).success).toBe(false);
+    expect(rescheduleInputSchema.parse({ ...input, version: 2 })).toMatchObject({ startMinute: 540, version: 2 });
+  });
   it("formatea límites sin conversiones de zona horaria", () => {
     expect(formatMinute(480)).toBe("08:00");
     expect(formatMinute(1020)).toBe("17:00");

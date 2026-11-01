@@ -91,7 +91,7 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, today }: { c
     setCancelError("");
     let saved = false;
     try {
-      await api(`/api/visits/${cancelTarget.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: "Cancelada" }) });
+      await api(`/api/visits/${cancelTarget.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: "Cancelada", version: cancelTarget.version }) });
       saved = true;
       setCancelTarget(null);
       await loadVisits(applied);
@@ -171,7 +171,7 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, today }: { c
     </main>
     {manageCatalogs && <CatalogManager catalogs={catalogs} onChange={setCatalogs} onClose={() => setManageCatalogs(false)} />}
     {manageBlocks && <BlockManager catalogs={catalogs} today={today} onChange={() => loadVisits(applied)} onClose={() => setManageBlocks(false)} />}
-    {detailId !== null && <VisitDetail key={detailId} id={detailId} onClose={() => setDetailId(null)} />}
+    {detailId !== null && <VisitDetail key={detailId} id={detailId} catalogs={catalogs} onChange={() => loadVisits(applied)} onClose={() => setDetailId(null)} />}
 
     <dialog ref={dialog} className="cancel-dialog" onCancel={(event) => { if (cancelling) event.preventDefault(); else setCancelTarget(null); }} onClose={() => setCancelTarget(null)} aria-labelledby="cancel-title">
       <div className="dialog-icon"><CalendarDays size={24} aria-hidden="true" /></div><h2 id="cancel-title">¿Cancelar esta visita?</h2>

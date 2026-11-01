@@ -33,3 +33,5 @@ AM-01–08, criterios de aceptación, dependencias y pruebas previstas en [PLAN_
 Actualización fase 1: AM-05, AM-06 y AM-07 implementados en esquema, servicios, rutas y componentes de catálogo/detalle. Evidencia automática: operations.test.ts y grupo AM-05/06/07 de integración. Revisión visual/personal pendiente. AM-01/02/03/04/08 continúan pendientes.
 
 AM-04 implementado: availability.ts, servicio transaccional, rutas /api/blocks y panel. Evidencia: availability.test.ts y grupo AM-04 de integración; revisión visual pendiente.
+
+AM-02 implementado: rescheduleInputSchema, PUT, servicio con versión y bloqueo ordenado, snapshot/historial y formulario de detalle. Evidencia AM-02 de integración, entrada unitaria y HTTP de consulta. Revisión visual pendiente.

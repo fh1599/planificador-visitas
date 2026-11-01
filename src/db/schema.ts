@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
-import { boolean, check, date, index, integer, pgEnum, pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
+import { boolean, check, date, index, integer, jsonb, pgEnum, pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
+import type { VisitSnapshot } from "../domain/history";
 
 export const visitStatus = pgEnum("visit_status", ["Programada", "Cancelada"]);
 
@@ -37,14 +38,26 @@ export const visits = pgTable("visits", {
   typeId: integer("type_id").references(() => visitTypes.id),
   typeName: varchar("type_name", { length: 100 }),
   typeInstructions: varchar("type_instructions", { length: 2000 }),
+  version: integer().notNull().default(1),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (table) => [
   check("duration_valid", sql`${table.duration} between 1 and 540`),
+  check("visit_version_positive", sql`${table.version} > 0`),
   check("start_in_workday", sql`${table.startMinute} between 480 and 1019`),
   check("end_in_workday", sql`${table.startMinute} + ${table.duration} <= 1020`),
   index("visits_agenda_idx").on(table.technicianId, table.date, table.status),
   index("visits_date_time_idx").on(table.date, table.startMinute),
 ]);
+
+export const visitEventKind = pgEnum("visit_event_kind", ["Programada", "Reprogramada", "Cancelada"]);
+export const visitEvents = pgTable("visit_events", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  visitId: integer("visit_id").notNull().references(() => visits.id, { onDelete: "cascade" }),
+  kind: visitEventKind().notNull(),
+  before: jsonb().$type<VisitSnapshot>(),
+  after: jsonb().$type<VisitSnapshot>().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [index("visit_events_visit_idx").on(table.visitId, table.createdAt), index("visit_events_recent_idx").on(table.createdAt)]);
 
 export const annotationKind = pgEnum("annotation_kind", ["Nota", "Incidencia", "Resultado"]);
 export const availabilityBlocks = pgTable("availability_blocks", {

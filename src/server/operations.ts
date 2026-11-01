@@ -1,6 +1,6 @@
 import { asc, eq } from "drizzle-orm";
 import type { Database } from "../db/connection";
-import { annotations, sites, technicians, visits, visitTypes } from "../db/schema";
+import { annotations, sites, technicians, visitEvents, visits, visitTypes } from "../db/schema";
 import { idSchema } from "../domain/input";
 import { annotationSchema, siteProfileSchema, visitTypeSchema } from "../domain/operations";
 import { VisitError } from "./visits";
@@ -31,7 +31,8 @@ export function operationsService(db: Database) {
         .innerJoin(sites, eq(visits.siteId, sites.id)).innerJoin(technicians, eq(visits.technicianId, technicians.id)).where(eq(visits.id, id));
       if (!row) throw new VisitError("VISIT_NOT_FOUND", "La visita no existe.", 404);
       const entries = await db.select().from(annotations).where(eq(annotations.visitId, id)).orderBy(asc(annotations.createdAt), asc(annotations.id));
-      return { ...row, annotations: entries.map((a) => ({ ...a, createdAt: a.createdAt.toISOString() })) };
+      const events = await db.select().from(visitEvents).where(eq(visitEvents.visitId, id)).orderBy(asc(visitEvents.createdAt), asc(visitEvents.id));
+      return { ...row, annotations: entries.map((a) => ({ ...a, createdAt: a.createdAt.toISOString() })), history: events.map((e) => ({ ...e, createdAt: e.createdAt.toISOString() })) };
     },
     async annotate(rawId: unknown, input: unknown) {
       const id = idSchema.parse(rawId);
