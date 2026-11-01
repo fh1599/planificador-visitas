@@ -44,3 +44,5 @@ Avance posterior al plan: fase 1 de ampliación implementada (AM-05/06/07), migr
 Avance fase 2: AM-04 implementado. 90 unitarias + 31 integraciones, tipos/lint/build y HTTP de lectura correctos. Las ausencias no cuentan como viaje; carrera bloqueo/reserva protegida. Continuar fase 3, reprogramación.
 
 Avance fase 3: AM-02 implementado. 91 unitarias; 38 integraciones completas y luego 9 AM-02 al ampliar la suite a 40, todas ejecutadas correctas. Tipos/lint/build y consultas HTTP correctos. Continuar fase 4; revisión visual/personal pendiente.
+
+Avance fase 4: búsqueda de huecos (AM-01) implementada. 96 unitarias + 43 integraciones, tipos/lint/build y HTTP correctos. Próxima fase: agenda visual diaria. Revisión visual/personal pendiente.

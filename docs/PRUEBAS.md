@@ -98,3 +98,7 @@ Fase 0 de ampliación, 01/11/2026: se repitieron 79 unitarias, TypeScript y lint
 ## Ampliación — hito 3, 01/11/2026
 
 91 unitarias correctas. Integración completa de 38 casos correcta; tras añadir dos casos, ejecución focalizada AM-02: 9 correctos y 31 omitidos, total de casos disponibles 40. Reprogramación: propio ID, notas, historial, fallo conserva original, nueva fecha/técnico, jornada completa, versiones concurrentes, cancelación concurrente, reserva concurrente, cambios cruzados de técnico, HTTP sin versión/obsoleto y cancelación idempotente. Tipos/lint/build correctos; HTTP de consultas con versión e historial correcto. Revisión visual pendiente.
+
+## Ampliación — hito 4, 01/11/2026
+
+96 unitarias y 43 integraciones PostgreSQL correctas. Tipos, lint y build correctos. POST HTTP real de sugerencias devuelve tres opciones sin escribir visitas. Se verifica minuto exacto, extremo de jornada, huecos agrupados, técnico/equipo, bloqueos, canceladas, no disponibilidad y revalidación de una propuesta ocupada entre consulta y reserva. Revisión visual pendiente.

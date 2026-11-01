@@ -195,3 +195,5 @@ No basta con aumentar el número de tests. Las pruebas deben detectar comportami
 Fase 2 (2.1–2.5): AM-04 implementado y verificado con 90 unitarias, 31 integraciones y tipos/lint/build. Migración aplicada y versión local actualizada. Próximo bloque: reprogramación atómica, control de versión e historial. La validación visual sigue pendiente.
 
 Fase 3 (3.1–3.5): reprogramación, versión e historial implementados. 91 unitarias, integración completa de 38 casos y posterior grupo ampliado AM-02 de 9 casos correctos (40 disponibles), tipos/lint/build y consultas HTTP correctos. Migración aplicada. Sigue fase 4, búsqueda de huecos.
+
+Fase 4 (4.1–4.5): AM-01 implementado. 96 unitarias + 43 integraciones, tipos/lint/build y POST HTTP real correctos. Se agrupan inicios válidos consecutivos en un hueco para evitar propuestas redundantes; criterio comunicado antes de implementar. Continúa fase 5, agenda visual.

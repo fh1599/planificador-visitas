@@ -9,6 +9,8 @@ import { api } from "@/client/api";
 import { CatalogManager } from "./catalog-manager";
 import { VisitDetail } from "./visit-detail";
 import { BlockManager } from "./block-manager";
+import { SlotSearch } from "./slot-search";
+import type { Slot } from "@/domain/suggestions";
 
 type Filters = { date: string; technicianId: string };
 type Notice = { text: string; tone: "success" | "error" } | null;
@@ -19,6 +21,8 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, today }: { c
   const [manageBlocks, setManageBlocks] = useState(false);
   const [detailId, setDetailId] = useState<number | null>(null);
   const [typeId, setTypeId] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [draft, setDraft] = useState({ siteId: "", technicianId: "", date: today });
   const [visits, setVisits] = useState(initialVisits);
   const [filters, setFilters] = useState<Filters>({ date: today, technicianId: "" });
   const [applied, setApplied] = useState(filters);
@@ -102,6 +106,13 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, today }: { c
     } finally { setCancelling(false); }
   }
 
+  function useSlot(slot: Slot) {
+    setDraft({ siteId: String(slot.siteId), technicianId: String(slot.technicianId), date: slot.date });
+    setStartTime(formatMinute(slot.startMinute)); setDuration(String(slot.duration)); setSearchOpen(false); setFormError("");
+    setNotice({ text: "Horario aplicado al formulario. Revisa los datos y pulsa Programar visita para confirmar.", tone: "success" });
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
   return <>
     <header className="topbar">
       <div className="topbar-inner">
@@ -153,12 +164,13 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, today }: { c
             <form onSubmit={createVisit} ref={formRef}>
               <fieldset disabled={busy || !catalogs.technicians.length || !catalogs.sites.length}>
                 <details className="optional-type"><summary>{typeId ? `Tipo: ${catalogs.types.find((t) => String(t.id) === typeId)?.name ?? "Seleccionado"}` : "Usar un tipo de visita (opcional)"}</summary><label>Tipo<select value={typeId} onChange={(e) => { setTypeId(e.target.value); const type = catalogs.types.find((t) => String(t.id) === e.target.value); if (type) setDuration(String(type.duration)); }}><option value="">Sin tipo · duración manual</option>{catalogs.types.filter((t) => t.active || String(t.id) === typeId).map((t) => <option key={t.id} value={t.id} disabled={!t.active}>{t.name} · {t.duration} min{!t.active && " · Desactivado"}</option>)}</select></label><p className="detail-help">La duración propuesta se puede ajustar. Gestiona tus tipos en «Obras y tipos».</p></details>
-                <label htmlFor="new-site">Obra<select id="new-site" name="siteId" required defaultValue=""><option value="" disabled>Selecciona una obra</option>{catalogs.sites.map((site) => <option key={site.id} value={site.id}>{site.name} · {site.municipality}</option>)}</select></label>
-                <label htmlFor="new-technician">Técnico<select id="new-technician" name="technicianId" required defaultValue=""><option value="" disabled>Selecciona un técnico</option>{catalogs.technicians.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}</select></label>
-                <label htmlFor="new-date">Fecha<input type="date" id="new-date" name="date" required defaultValue={today} /></label>
+                <label htmlFor="new-site">Obra<select id="new-site" name="siteId" required value={draft.siteId} onChange={(e) => setDraft({ ...draft, siteId: e.target.value })}><option value="" disabled>Selecciona una obra</option>{catalogs.sites.map((site) => <option key={site.id} value={site.id}>{site.name} · {site.municipality}</option>)}</select></label>
+                <label htmlFor="new-technician">Técnico<select id="new-technician" name="technicianId" required value={draft.technicianId} onChange={(e) => setDraft({ ...draft, technicianId: e.target.value })}><option value="" disabled>Selecciona un técnico</option>{catalogs.technicians.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}</select></label>
+                <label htmlFor="new-date">Fecha<input type="date" id="new-date" name="date" required value={draft.date} onChange={(e) => setDraft({ ...draft, date: e.target.value })} /></label>
                 <div className="time-fields"><label htmlFor="new-time">Hora de inicio<input type="time" id="new-time" name="startTime" required min="08:00" max="16:59" step="60" value={startTime} onChange={(e) => setStartTime(e.target.value)} /></label><label htmlFor="new-duration">Duración <span className="label-unit">(min)</span><input type="number" id="new-duration" name="duration" required min="1" max="540" step="1" value={duration} onChange={(e) => setDuration(e.target.value)} /></label></div>
                 <div className="end-preview"><Clock3 size={15} aria-hidden="true" /><span>Finalización prevista</span><strong>{validEnd ? formatMinute(endMinute) : "—"}</strong></div>
                 {formError && <div className="form-error" role="alert"><strong>No se ha podido confirmar la visita</strong><p>{formError}</p></div>}
+                <button className="text-button search-slots-button" type="button" onClick={() => setSearchOpen(true)}>Buscar un horario libre</button>
                 <button className="button primary create-submit" type="submit"><Plus size={17} aria-hidden="true" />{saving ? "Comprobando y guardando…" : "Programar visita"}</button>
               </fieldset>
             </form>
@@ -169,6 +181,7 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, today }: { c
       </div>
       <footer className="page-footer"><span>Planificador de visitas</span><span>Horario local · Europe/Madrid</span></footer>
     </main>
+    {searchOpen && <SlotSearch catalogs={catalogs} initial={{ ...draft, startTime, duration }} onApply={useSlot} onClose={() => setSearchOpen(false)} />}
     {manageCatalogs && <CatalogManager catalogs={catalogs} onChange={setCatalogs} onClose={() => setManageCatalogs(false)} />}
     {manageBlocks && <BlockManager catalogs={catalogs} today={today} onChange={() => loadVisits(applied)} onClose={() => setManageBlocks(false)} />}
     {detailId !== null && <VisitDetail key={detailId} id={detailId} catalogs={catalogs} onChange={() => loadVisits(applied)} onClose={() => setDetailId(null)} />}

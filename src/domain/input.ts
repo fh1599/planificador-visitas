@@ -22,6 +22,7 @@ function withStartMinute<T extends { startTime: string }>(input: T) {
 }
 export const visitInputSchema = visitFields.transform(withStartMinute);
 export const rescheduleInputSchema = visitFields.omit({ typeId: true }).extend({ version: idSchema }).transform(withStartMinute);
+export const suggestionInputSchema = visitFields.omit({ typeId: true }).partial({ technicianId: true }).transform(withStartMinute);
 
 export const filterSchema = z.strictObject({
   technicianId: z.coerce.number().int().positive().max(2147483647).optional(),

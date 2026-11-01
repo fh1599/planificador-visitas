@@ -19,6 +19,7 @@ import { availabilityService } from "../../src/server/availability";
 import { availabilityBlocks } from "../../src/db/schema";
 import { POST as createBlock, GET as listBlocks } from "../../src/app/api/blocks/route";
 import { PATCH as removeBlock } from "../../src/app/api/blocks/[id]/route";
+import { POST as searchSlots } from "../../src/app/api/suggestions/route";
 
 config({ path: ".env.local", quiet: true });
 const testUrl = process.env.TEST_DATABASE_URL;
@@ -362,5 +363,31 @@ describe("AM-02 · Reprogramación atómica", () => {
     await service.cancel(visit.id); await service.cancel(visit.id);
     await expect(service.reschedule(visit.id, { ...input, version: visit.version })).rejects.toMatchObject({ code: "VISIT_CANCELLED" });
     expect((await operations.detail(visit.id)).history.map((e) => e.kind)).toEqual(["Programada", "Cancelada"]);
+  });
+});
+
+describe("AM-01 · Buscar y confirmar", () => {
+  it("consulta sin reservar y rechaza una propuesta que otro usuario ocupó", async () => {
+    const response = await searchSlots(request(input)); expect(response.status).toBe(200);
+    const { suggestions } = await response.json(); expect(suggestions).toHaveLength(1);
+    expect(suggestions[0]).toMatchObject({ technicianId: 1, startMinute: 540 });
+    expect(await service.list()).toHaveLength(0);
+    await independentService.create(input);
+    expect((await POST(request(input))).status).toBe(409);
+    const refreshed = await searchSlots(request(input));
+    expect((await refreshed.json()).suggestions.every((s: { startMinute: number }) => s.startMinute !== 540)).toBe(true);
+  });
+  it("busca en el equipo, excluye al técnico bloqueado y produce reservas válidas", async () => {
+    await availability.create({ technicianId: 1, startDate: input.date, endDate: input.date, startTime: "08:00", endTime: "17:00", reason: "" });
+    const response = await searchSlots(request({ siteId: 1, date: input.date, startTime: "09:00", duration: 60 }));
+    const { suggestions } = await response.json();
+    expect(suggestions.map((s: { technicianId: number }) => s.technicianId)).toEqual([2, 3, 4]);
+    for (const suggestion of suggestions) expect((await POST(request({ ...input, technicianId: suggestion.technicianId }))).status).toBe(201);
+    expect((await (await searchSlots(request(input))).json()).suggestions).toEqual([]);
+  });
+  it("rechaza búsqueda inválida y referencias inexistentes", async () => {
+    expect((await searchSlots(request({ ...input, duration: 0 }))).status).toBe(400);
+    expect((await searchSlots(request({ ...input, siteId: 2147483647 }))).status).toBe(404);
+    expect((await searchSlots(request({ ...input, technicianId: 2147483647 }))).status).toBe(404);
   });
 });
