@@ -90,3 +90,7 @@ Fase 0 de ampliación, 01/11/2026: se repitieron 79 unitarias, TypeScript y lint
 ## Ampliación — hito 1, 01/11/2026
 
 83 unitarias y 26 integraciones PostgreSQL correctas, más tipos/lint/build. Nuevas pruebas AM-05/06/07: ficha vacía/teléfono/límites, anotación como texto, tipos inválidos/desactivados, duración manual, copia de instrucciones, conservación tras cancelación y API. Ensayo de actualización: SQL original con visitas programadas/canceladas en esquema aislado de *_test, aplicación de las migraciones siguientes y comparación de IDs, referencias, fecha, horas, estado y creación. Conexión de prueba protegida antes de toda escritura destructiva. La comprobación HTTP de la versión compilada no sustituye la revisión visual, pendiente.
+
+## Ampliación — hito 2, 01/11/2026
+
+90 unitarias y 31 integraciones correctas, más tipos/lint/build. Incluye bordes, contención y cruce de bloqueos, días/rangos, otro técnico, retirados, viajes de 29/30 minutos y fragmentos discontinuos; API de crear/retirar bloqueo; visitas canceladas; bloqueo que invalida reservas; identificación de visitas afectadas sin incluir otras; carrera bloqueo/reserva con conexiones independientes. Migración 0002 aplicada y página/API de bloqueos responden HTTP 200 en el servidor compilado. Revisión visual sigue pendiente.

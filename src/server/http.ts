@@ -34,7 +34,7 @@ export async function respond(action: () => Promise<unknown>, status = 200) {
       return Response.json({ error: { code: "INVALID_JSON", message: "No se ha podido leer la solicitud." } }, { status: 400 });
     }
     if (error instanceof VisitError) {
-      return Response.json({ error: { code: error.code, message: error.message } }, { status: error.httpStatus });
+      return Response.json({ error: { code: error.code, message: error.message, ...(error.details ? { details: error.details } : {}) } }, { status: error.httpStatus });
     }
     // Never include raw driver errors: they may contain SQL or connection details.
     console.error("No se pudo completar la operación de visitas.", error instanceof Error ? error.name : "UnknownError");

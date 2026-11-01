@@ -15,6 +15,10 @@ import { PATCH as editSite } from "../../src/app/api/sites/[id]/route";
 import { POST as addType } from "../../src/app/api/types/route";
 import { POST as addNote } from "../../src/app/api/visits/[id]/notes/route";
 import { GET as getDetail } from "../../src/app/api/visits/[id]/route";
+import { availabilityService } from "../../src/server/availability";
+import { availabilityBlocks } from "../../src/db/schema";
+import { POST as createBlock, GET as listBlocks } from "../../src/app/api/blocks/route";
+import { PATCH as removeBlock } from "../../src/app/api/blocks/[id]/route";
 
 config({ path: ".env.local", quiet: true });
 const testUrl = process.env.TEST_DATABASE_URL;
@@ -30,6 +34,7 @@ const second = createDatabase(testUrl);
 const service = visitService(first.db);
 const independentService = visitService(second.db);
 const operations = operationsService(first.db);
+const availability = availabilityService(first.db);
 const input = { technicianId: 1, siteId: 1, date: "2026-11-02", startTime: "09:00", duration: 60 };
 const request = (body: unknown, origin = "http://localhost:3000") => new Request("http://localhost:3000/api/visits", { method: "POST", headers: { "Content-Type": "application/json", Origin: origin }, body: JSON.stringify(body) });
 
@@ -41,6 +46,50 @@ beforeEach(async () => {
   // Deliberately disposable fixtures, only in the guarded *_test database.
   await first.db.delete(visits);
   await first.db.delete(visitTypes);
+  await first.db.delete(availabilityBlocks);
+});
+
+describe("AM-04 · Disponibilidad transaccional", () => {
+  const blockInput = { technicianId: 1, startDate: input.date, endDate: input.date, startTime: "09:00", endTime: "10:00", reason: "Ausencia" };
+  it("valida bloqueos por API y rechaza visitas sin depender del formulario", async () => {
+    const response = await createBlock(request(blockInput));
+    expect(response.status).toBe(201);
+    const { block } = await response.json();
+    expect((await POST(request(input))).status).toBe(409);
+    expect((await listBlocks(new Request(`http://localhost:3000/api/blocks?date=${input.date}&technicianId=1`))).status).toBe(200);
+    expect((await createBlock(request({ ...blockInput, endTime: "18:00" }))).status).toBe(400);
+    expect((await removeBlock(request({ active: false }), { params: Promise.resolve({ id: String(block.id) }) })).status).toBe(200);
+    expect((await POST(request(input))).status).toBe(201);
+  });
+  it("impide reservar, admite otro técnico y libera al retirar un bloqueo", async () => {
+    const block = await availability.create(blockInput);
+    await expect(service.create(input)).rejects.toMatchObject({ code: "UNAVAILABLE" });
+    await service.create({ ...input, technicianId: 2 });
+    await availability.remove(block.id);
+    await service.create(input);
+    expect(await availability.list({ date: input.date })).toHaveLength(0);
+  });
+  it("rechaza bloqueos que invalidan visitas o su viaje, conservando la agenda", async () => {
+    const visit = await service.create(input);
+    await service.create({ ...input, siteId: 2, startTime: "11:00" });
+    const unaffected = await service.create({ ...input, startTime: "14:00" });
+    await expect(availability.create(blockInput)).rejects.toMatchObject({ code: "BLOCK_CONFLICT", details: { visitIds: expect.arrayContaining([visit.id]) } });
+    await expect(availability.create({ ...blockInput, startTime: "10:20", endTime: "10:40" })).rejects.toMatchObject({ code: "BLOCK_CONFLICT", details: { visitIds: expect.not.arrayContaining([unaffected.id]) } });
+    expect(await availability.list({})).toHaveLength(0);
+    await availability.create({ ...blockInput, startTime: "10:30", endTime: "11:00" });
+  });
+  it("admite rango completo con visitas canceladas y rechaza bloques duplicados", async () => {
+    const visit = await service.create(input); await service.cancel(visit.id);
+    await availability.create({ ...blockInput, startTime: "08:00", endTime: "17:00", endDate: "2026-11-04" });
+    await expect(service.create({ ...input, date: "2026-11-04" })).rejects.toMatchObject({ code: "UNAVAILABLE" });
+    await expect(availability.create(blockInput)).rejects.toMatchObject({ code: "BLOCK_OVERLAP" });
+    await service.create({ ...input, date: "2026-11-05" });
+  });
+  it("serializa la carrera entre un bloqueo y una visita incompatibles", async () => {
+    const results = await Promise.allSettled([availability.create(blockInput), independentService.create(input)]);
+    expect(results.filter((r) => r.status === "fulfilled")).toHaveLength(1);
+    expect((await availability.list({})).length + (await service.list()).length).toBe(1);
+  });
 });
 
 describe("AM-05/06/07 · Fichas, tipos y seguimiento", () => {
@@ -108,8 +157,11 @@ describe("AM-05/06/07 · Fichas, tipos y seguimiento", () => {
   });
 });
 afterAll(async () => {
-  await first.db.delete(visits);
-  await Promise.all([first.client.end(), second.client.end(), getDatabase().$client.end()]);
+  try {
+    await first.db.delete(visits);
+    await first.db.delete(availabilityBlocks);
+    await first.db.delete(visitTypes);
+  } finally { await Promise.all([first.client.end(), second.client.end(), getDatabase().$client.end()]); }
 });
 
 describe("INT-01 · Persistencia relacional", () => {

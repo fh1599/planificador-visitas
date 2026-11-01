@@ -40,3 +40,5 @@ El usuario seleccionó búsqueda de huecos, reprogramación, agenda visual, bloq
 Preparación de ampliación (0.1–0.3) completada: plan documentado y base comprobada de nuevo (79 unitarias + 21 integración; tipos y lint correctos). Siguiente bloque: 1.1, diseño de interacción, y 0.4/1.2, casos y diseño de migraciones.
 
 Avance posterior al plan: fase 1 de ampliación implementada (AM-05/06/07), migración aditiva aplicada y servidor local actualizado. 83 unitarias + 26 integraciones, tipos/lint/build correctos. Inspección visual nueva pendiente. Continuar fase 2 del plan de ampliación; el paquete previo todavía corresponde al núcleo.
+
+Avance fase 2: AM-04 implementado. 90 unitarias + 31 integraciones, tipos/lint/build y HTTP de lectura correctos. Las ausencias no cuentan como viaje; carrera bloqueo/reserva protegida. Continuar fase 3, reprogramación.

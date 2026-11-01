@@ -47,6 +47,22 @@ export const visits = pgTable("visits", {
 ]);
 
 export const annotationKind = pgEnum("annotation_kind", ["Nota", "Incidencia", "Resultado"]);
+export const availabilityBlocks = pgTable("availability_blocks", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  technicianId: integer("technician_id").notNull().references(() => technicians.id),
+  startDate: date("start_date", { mode: "string" }).notNull(),
+  endDate: date("end_date", { mode: "string" }).notNull(),
+  startMinute: integer("start_minute").notNull(),
+  endMinute: integer("end_minute").notNull(),
+  reason: varchar({ length: 300 }).notNull().default(""),
+  active: boolean().notNull().default(true),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (table) => [
+  check("block_dates_valid", sql`${table.startDate} <= ${table.endDate}`),
+  check("block_hours_valid", sql`${table.startMinute} >= 480 and ${table.endMinute} <= 1020 and ${table.startMinute} < ${table.endMinute}`),
+  index("blocks_agenda_idx").on(table.technicianId, table.startDate, table.endDate, table.active),
+]);
+
 export const annotations = pgTable("annotations", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   visitId: integer("visit_id").notNull().references(() => visits.id, { onDelete: "cascade" }),

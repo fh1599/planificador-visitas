@@ -8,6 +8,7 @@ import { displayDate, formatMinute } from "@/domain/time";
 import { api } from "@/client/api";
 import { CatalogManager } from "./catalog-manager";
 import { VisitDetail } from "./visit-detail";
+import { BlockManager } from "./block-manager";
 
 type Filters = { date: string; technicianId: string };
 type Notice = { text: string; tone: "success" | "error" } | null;
@@ -15,6 +16,7 @@ type Notice = { text: string; tone: "success" | "error" } | null;
 export function Planner({ catalogs: initialCatalogs, initialVisits, today }: { catalogs: Catalogs; initialVisits: VisitRow[]; today: string }) {
   const [catalogs, setCatalogs] = useState(initialCatalogs);
   const [manageCatalogs, setManageCatalogs] = useState(false);
+  const [manageBlocks, setManageBlocks] = useState(false);
   const [detailId, setDetailId] = useState<number | null>(null);
   const [typeId, setTypeId] = useState("");
   const [visits, setVisits] = useState(initialVisits);
@@ -110,7 +112,7 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, today }: { c
     </header>
 
     <main className="workspace">
-      <div className="workspace-tools"><button type="button" className="button secondary" disabled={busy} onClick={() => setManageCatalogs(true)}>Obras y tipos</button></div>
+      <div className="workspace-tools"><button type="button" className="button secondary" disabled={busy} onClick={() => setManageBlocks(true)}>Disponibilidad</button><button type="button" className="button secondary" disabled={busy} onClick={() => setManageCatalogs(true)}>Obras y tipos</button></div>
       <div className="page-heading">
         <div><p className="eyebrow">PLANIFICACIÓN DEL EQUIPO</p><h1>Agenda de visitas<span className="heading-dot">.</span></h1><p className="page-description">Cada obra a su hora. Organiza las visitas y evita conflictos.</p></div>
         <div className="team-indicator"><span className="team-icon"><Users size={20} aria-hidden="true" /></span><span><strong>{catalogs.technicians.length} técnicos</strong><small>{catalogs.sites.length} obras en el catálogo</small></span></div>
@@ -168,6 +170,7 @@ export function Planner({ catalogs: initialCatalogs, initialVisits, today }: { c
       <footer className="page-footer"><span>Planificador de visitas</span><span>Horario local · Europe/Madrid</span></footer>
     </main>
     {manageCatalogs && <CatalogManager catalogs={catalogs} onChange={setCatalogs} onClose={() => setManageCatalogs(false)} />}
+    {manageBlocks && <BlockManager catalogs={catalogs} today={today} onChange={() => loadVisits(applied)} onClose={() => setManageBlocks(false)} />}
     {detailId !== null && <VisitDetail key={detailId} id={detailId} onClose={() => setDetailId(null)} />}
 
     <dialog ref={dialog} className="cancel-dialog" onCancel={(event) => { if (cancelling) event.preventDefault(); else setCancelTarget(null); }} onClose={() => setCancelTarget(null)} aria-labelledby="cancel-title">

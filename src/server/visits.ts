@@ -1,11 +1,11 @@
 import { and, asc, eq } from "drizzle-orm";
 import type { Database } from "../db/connection";
-import { sites, technicians, visits, visitTypes } from "../db/schema";
+import { availabilityBlocks, sites, technicians, visits, visitTypes } from "../db/schema";
 import { filterSchema, idSchema, visitInputSchema } from "../domain/input";
 import { checkPlanning } from "../domain/planning";
 
 export class VisitError extends Error {
-  constructor(public code: string, message: string, public httpStatus = 409) { super(message); }
+  constructor(public code: string, message: string, public httpStatus = 409, public details?: Record<string, unknown>) { super(message); }
 }
 
 export function visitService(db: Database) {
@@ -22,7 +22,8 @@ export function visitService(db: Database) {
         const [type] = data.typeId ? await tx.select().from(visitTypes).where(eq(visitTypes.id, data.typeId)).for("share") : [];
         if (data.typeId && (!type || !type.active)) throw new VisitError("TYPE_UNAVAILABLE", "Este tipo ya no está disponible. Recarga los tipos o programa la visita sin tipo.");
         const existing = await tx.select().from(visits).where(and(eq(visits.technicianId, data.technicianId), eq(visits.date, data.date), eq(visits.status, "Programada")));
-        const conflict = checkPlanning({ ...data, status: "Programada" }, existing);
+        const blocks = await tx.select().from(availabilityBlocks).where(and(eq(availabilityBlocks.technicianId, data.technicianId), eq(availabilityBlocks.active, true)));
+        const conflict = checkPlanning({ ...data, status: "Programada" }, existing, blocks);
         if (conflict) throw new VisitError(conflict.code, conflict.message);
         const [saved] = await tx.insert(visits).values({ ...data, typeName: type?.name, typeInstructions: type?.instructions }).returning();
         return saved;
