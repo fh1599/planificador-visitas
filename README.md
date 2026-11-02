@@ -137,7 +137,7 @@ Para cambiar el esquema, edita `src/db/schema.ts`, ejecuta `npm run db:generate`
 
 ## Entrega y uso de IA
 
-La [explicación técnica](docs/RESUMEN_TECNICO.md), también disponible en [PDF de una página](docs/RESUMEN_TECNICO.pdf), resume decisiones, pendientes, supuestos y una corrección real del contenido generado por IA. El [diario](docs/DIARIO_DESARROLLO.md) conserva las incidencias y su verificación. El [estado del proyecto](docs/ESTADO_PROYECTO.md) distingue lo implementado, comprobado y pendiente.
+La [explicación técnica](docs/RESUMEN_TECNICO.md), también disponible en [PDF de una página](docs/RESUMEN_TECNICO.pdf), cuenta en primera persona cómo se organizó el trabajo por fases y subfases, las decisiones y prioridades, el reparto del trabajo con Codex, las pruebas y los pendientes. Incluye los supuestos y una corrección real del código generado por IA. El [diario](docs/DIARIO_DESARROLLO.md) conserva las incidencias y su verificación. El [estado del proyecto](docs/ESTADO_PROYECTO.md) distingue lo implementado, comprobado y pendiente.
 
 Repositorio y demo publicados el 02/11/2026. La URL pública pasó las comprobaciones HTTP de las ocho ampliaciones; en navegador se verificaron creación, persistencia tras recarga, detalle y nota. La inspección móvil/teclado sigue pendiente. No se incluyen el PDF original, conversaciones privadas ni credenciales en el contenido de entrega.
 
